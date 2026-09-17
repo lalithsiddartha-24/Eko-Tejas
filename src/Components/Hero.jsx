@@ -1,6 +1,6 @@
 import { ArrowRight, Leaf, MapPin, Play, Zap } from "lucide-react";
 
-function Hero() {
+function Hero({ onNavigate }) {
 return (
     <section
     id="home"
@@ -44,7 +44,7 @@ return (
           {/* Buttons */}
         <div className="mt-8 flex flex-wrap gap-4">
 
-            <button className="flex items-center gap-2 rounded-full bg-[#073D34] px-6 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#0E5A4D]">
+            <button type="button" onClick={() => onNavigate("vehicles")} className="flex items-center gap-2 rounded-full bg-[#073D34] px-6 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-1 hover:bg-[#0E5A4D]">
             Explore Our Vehicles
             <ArrowRight size={18} />
             </button>

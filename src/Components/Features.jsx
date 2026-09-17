@@ -1,30 +1,31 @@
 import {
     IndianRupee,
     MapPin,
+    Settings,
     Wrench,
-    Zap,
 } from "lucide-react";
+
 const features = [
-{
-    icon: Zap,
-    title: "Powerful Performance",
-    description: "Built for smooth and reliable everyday rides",
-},
-{
+  {
     icon: IndianRupee,
     title: "Cost Efficient",
     description: "Lower running costs for smarter mobility",
-},
-{
+  },
+  {
     icon: Wrench,
+    title: "65 Professional Mechanics",
+    description: "Skilled technicians ready to support your vehicle",
+  },
+  {
+    icon: Settings,
+    title: "941 Spare Parts",
+    description: "A wide range of spare parts for reliable maintenance",
+  },
+  {
+    icon: MapPin,
     title: "Easy Service Access",
     description: "Reliable support whenever you need it",
-},
-{
-    icon: MapPin,
-    title: "Made for Indian Roads",
-    description: "Designed for everyday Indian conditions",
-},
+  },
 ];
 function FeatureStrip() {
   return (
