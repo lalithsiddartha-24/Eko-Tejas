@@ -13,3 +13,60 @@ body {
   margin: 0;
   font-family: "DM Sans", sans-serif;
 }
+
+.premium-plan-card::after {
+  position: absolute;
+  z-index: 0;
+  inset: -40% auto -40% -45%;
+  width: 35%;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent,
+    rgb(220 245 229 / 5%) 35%,
+    rgb(220 245 229 / 20%) 50%,
+    rgb(220 245 229 / 5%) 65%,
+    transparent
+  );
+  opacity: 1;
+  transform: translateX(-120%) skewX(-18deg);
+  animation: premium-plan-shine 5s ease-in-out infinite;
+}
+
+.premium-plan-card > p,
+.premium-plan-card > h3,
+.premium-plan-card > button {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes premium-plan-shine {
+  0%,
+  18% {
+    opacity: 0;
+    transform: translateX(-120%) skewX(-18deg);
+  }
+
+  22% {
+    opacity: 1;
+  }
+
+  72% {
+    opacity: 0;
+    transform: translateX(520%) skewX(-18deg);
+  }
+
+  82%,
+  100% {
+    opacity: 0;
+    transform: translateX(520%) skewX(-18deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .premium-plan-card::after {
+    animation: none;
+    opacity: 0;
+  }
+}

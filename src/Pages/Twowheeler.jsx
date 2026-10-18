@@ -1,62 +1,33 @@
+import { useEffect, useState } from "react";
 import VehicleCard from "../Components/Vehiclecard";
-const twoWheelers = [
-  {
-    name: "Axel",
-    tagline: "Everyday Freedom",
-    range: "95 km",
-    power: "2.3 kW",
-  },
-  {
-    name: "Axel Pro",
-    tagline: "More Power",
-    range: "120 km",
-    power: "2.8 kW",
-  },
-  {
-    name: "Era",
-    tagline: "Urban Companion",
-    range: "110 km",
-    power: "2.5 kW",
-  },
-  {
-    name: "Era Pro",
-    tagline: "Next Level Rides",
-    range: "135 km",
-    power: "3.1 kW",
-  },
-  {
-    name: "Reco",
-    tagline: "Reliable & Efficient",
-    range: "100 km",
-    power: "2.4 kW",
-  },
-  {
-    name: "Prive",
-    tagline: "Premium Comfort",
-    range: "125 km",
-    power: "2.9 kW",
-  },
-  {
-    name: "EVXTRO",
-    tagline: "Built for Performance",
-    range: "140 km",
-    power: "3.5 kW",
-  },
-  {
-    name: "Dyroth",
-    tagline: "Bold by Design",
-    range: "130 km",
-    power: "3.0 kW",
-  },
-  {
-    name: "RUGD 12",
-    tagline: "Made for More",
-    range: "150 km",
-    power: "3.7 kW",
-  },
-];
+import scooterImage from "../assets/Modern Mint-Accent Electric Scooter.png";
 
 function Twowheeler() {
+  const [twoWheelers, setTwoWheelers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error,setError] = useState("");
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/vehicles?category=two-wheeler")
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok || !payload.success || !Array.isArray(payload.data)) {
+          throw new Error(payload.message || `HTTP ${response.status}`);
+        }
+        return payload.data;
+      })
+      .then((vehicles) => {
+        setTwoWheelers(vehicles);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch two-wheelers:", error);
+        setError("Failed to load vehicles. Please try again later.");
+        setTwoWheelers([]);
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <section id="two-wheelers" className="bg-[#F4F7F3] px-6 py-24 md:px-10 lg:px-16">
       <div className="mx-auto max-w-7xl">
@@ -69,16 +40,27 @@ function Twowheeler() {
           </h2>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {twoWheelers.map((vehicle, index) => (
-            <VehicleCard
-              key={vehicle.name}
-              vehicle={vehicle}
-              index={index}
-              viewTo="/twowheelers"
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center text-[#173C34]">Loading vehicles...</div>
+        ) : error ? (
+          <div className="text-center text-[#FF0000]">{error}</div>
+        ) : twoWheelers.length === 0 ? (
+          <div className="text-center text-[#52635D]">No vehicles found.</div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {twoWheelers.map((vehicle) => ({
+              ...vehicle,
+              image: vehicle.image || scooterImage,
+            })).map((vehicle, index) => (
+              <VehicleCard
+                key={vehicle.name}
+                vehicle={vehicle}
+                index={index}
+                viewTo={`/vehicle-presentation/${encodeURIComponent(vehicle.name)}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

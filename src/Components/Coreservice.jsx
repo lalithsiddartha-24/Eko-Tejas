@@ -55,8 +55,6 @@ return (
                 <p className = "mt-4 leading-7  text-gray-700">
                     {service.description}
                 </p>
-
-    
             </div>
 ))}
             </div>

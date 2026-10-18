@@ -9,6 +9,7 @@ import Vehicle from "./Components/Vehicle";
 import Vehiclecards from "./Components/Vehiclecards";
 import Threewheeler from "./Pages/Threewheeler";
 import Twowheeler from "./Pages/Twowheeler";
+import VehiclePresentation from "./Pages/VehiclePresentation";
 
 function App() {
   const navigate = useNavigate();
@@ -34,6 +35,9 @@ function App() {
         />
         <Route path="/twowheelers" element={<Twowheeler />} />
         <Route path="/vehicles" element={<Threewheeler />} />
+        <Route path="/vehicle-presentation/:vehicleCategory/:vehicleName" element={<VehiclePresentation />} />
+        <Route path="/vehicle-presentation/:vehicleName" element={<VehiclePresentation />} />
+        <Route path="/vehicle-presentation" element={<VehiclePresentation />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

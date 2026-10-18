@@ -4,7 +4,7 @@ function Hero({ onNavigate }) {
 return (
     <section
     id="home"
-    className="relative min-h-[calc(100vh-76px)] overflow-hidden bg-[#F4F7F3]"
+  className="relative -mt-[82px] min-h-[calc(100vh-76px)] overflow-hidden bg-[#F4F7F3] pt-[82px]"
     >
     
       {/* Background decorative circles */}

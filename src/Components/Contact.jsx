@@ -5,7 +5,7 @@ function Contact()
 
             <div className  = "mx-auto max-w-7xl">
                 <p className  = "text-xs tracking-[0.3em] font-bold text-[#79A88F]">Contact</p>
-                <h3 className = " mt-8text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+                <h3 className = " mt-8 text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
                     Touch with
                     <span className = "block text-[#79A88F]">Us...</span>
                 </h3>
