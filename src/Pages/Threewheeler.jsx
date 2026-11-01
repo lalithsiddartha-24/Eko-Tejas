@@ -7,7 +7,7 @@ function ThreeWheelerSection() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/vehicles?category=three-wheeler")
+    fetch("/api/vehicles?category=three-wheeler")
       .then(async (response) => {
         const payload = await response.json();
         if (!response.ok || !payload.success || !Array.isArray(payload.data)) {

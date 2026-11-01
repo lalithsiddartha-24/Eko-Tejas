@@ -145,7 +145,7 @@ function VehiclePresentation() {
 
     const controller = new AbortController();
     fetch(
-      `http://localhost:5000/api/vehicle-presentations/${encodeURIComponent(vehicleName)}`,
+      `/api/vehicle-presentations/${encodeURIComponent(vehicleName)}`,
       { signal: controller.signal },
     )
       .then(async (response) => {
