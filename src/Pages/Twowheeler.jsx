@@ -8,7 +8,7 @@ function Twowheeler() {
   const [error,setError] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/vehicles?category=two-wheeler")
+    fetch("/api/vehicles?category=two-wheeler")
       .then(async (response) => {
         const payload = await response.json();
         if (!response.ok || !payload.success || !Array.isArray(payload.data)) {
