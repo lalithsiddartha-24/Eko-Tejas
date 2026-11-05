@@ -1,8 +1,7 @@
 require("dotenv").config();
 
 const { createSupabaseClients } = require("./config/supabase");
-const { createApp } = require("./app");
-
+const { createApp } = require("./createApp");
 const app = createApp(createSupabaseClients());
 const port = Number(process.env.PORT || 5000);
 
