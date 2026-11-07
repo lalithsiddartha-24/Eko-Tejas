@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import VehicleCard from "../Components/Vehiclecard";
+import { readApiJson } from "../utils/api";
 
 function ThreeWheelerSection() {
   const [threeWheelers, setThreeWheelers] = useState([]);
@@ -9,8 +10,8 @@ function ThreeWheelerSection() {
   useEffect(() => {
     fetch("/api/vehicles?category=three-wheeler")
       .then(async (response) => {
-        const payload = await response.json();
-        if (!response.ok || !payload.success || !Array.isArray(payload.data)) {
+        const payload = await readApiJson(response);
+        if (!payload.success || !Array.isArray(payload.data)) {
           throw new Error(payload.message || `HTTP ${response.status}`);
         }
         return payload.data;

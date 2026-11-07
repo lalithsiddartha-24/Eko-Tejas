@@ -7,6 +7,7 @@ import {
   VehicleSpecifications,
 } from "../Components/VehicleShowcase";
 import { getVehicleMedia } from "../Components/vehicleShowcaseUtils";
+import { readApiJson } from "../utils/api";
 
 const nameFields = ["name", "vehicle name", "model", "model name", "title"];
 const categoryFields = ["category", "vehicle category", "type", "vehicle type"];
@@ -149,8 +150,8 @@ function VehiclePresentation() {
       { signal: controller.signal },
     )
       .then(async (response) => {
-        const payload = await response.json();
-        if (!response.ok || !payload.success || !payload.vehicle) {
+        const payload = await readApiJson(response);
+        if (!payload.success || !payload.vehicle) {
           throw new Error(payload.message || `HTTP ${response.status}`);
         }
         return payload.vehicle;

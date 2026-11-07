@@ -52,8 +52,9 @@ token with Supabase Auth, then checks the user's UUID against
 
 ## Vercel
 
-The root `vercel.json` routes `/api/*` to the backend service rooted at
-`backend/`. Configure the Supabase variables above in the backend service's
-runtime environment settings for each deployment environment. The Express
-application is exported from `server.js` for serverless handling; `app.listen`
-is used only for local execution. No local filesystem persistence is used.
+The root `vercel.json` routes `/api/*` to the Express application in `app.js`,
+with the backend service rooted at `backend/`. Configure the Supabase variables
+above in the backend service's runtime environment settings for each deployment
+environment. `server.js` imports that same application and starts a local HTTP
+listener for `npm start`; Vercel loads the Express app directly and does not
+start a separate listener. No local filesystem persistence is used.

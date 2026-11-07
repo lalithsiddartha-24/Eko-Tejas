@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import VehicleCard from "../Components/Vehiclecard";
-import scooterImage from "../assets/Modern Mint-Accent Electric Scooter.png";
+import { readApiJson } from "../utils/api";
 
 function Twowheeler() {
   const [twoWheelers, setTwoWheelers] = useState([]);
@@ -10,8 +10,8 @@ function Twowheeler() {
   useEffect(() => {
     fetch("/api/vehicles?category=two-wheeler")
       .then(async (response) => {
-        const payload = await response.json();
-        if (!response.ok || !payload.success || !Array.isArray(payload.data)) {
+        const payload = await readApiJson(response);
+        if (!payload.success || !Array.isArray(payload.data)) {
           throw new Error(payload.message || `HTTP ${response.status}`);
         }
         return payload.data;
@@ -48,10 +48,7 @@ function Twowheeler() {
           <div className="text-center text-[#52635D]">No vehicles found.</div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {twoWheelers.map((vehicle) => ({
-              ...vehicle,
-              image: vehicle.image || scooterImage,
-            })).map((vehicle, index) => (
+            {twoWheelers.map((vehicle, index) => (
               <VehicleCard
                 key={vehicle.name}
                 vehicle={vehicle}

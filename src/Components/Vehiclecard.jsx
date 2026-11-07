@@ -1,8 +1,13 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import scooterImage from "../assets/Modern Mint-Accent Electric Scooter.png";
 
 function VehicleCard({ vehicle, index, viewTo = "/vehicles" }) {
-  const imageSrc = vehicle.image || scooterImage;
+  const [failedImage, setFailedImage] = useState("");
+  const imageSrc =
+    vehicle.image && vehicle.image !== failedImage
+      ? vehicle.image
+      : scooterImage;
 
   return (
     <article className="group flex h-full min-h-[520px] flex-col overflow-hidden rounded-[30px] border border-[#D9E5DE] bg-[#F5F8F6] p-4 shadow-[0_14px_35px_rgba(13,56,47,0.07)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_18px_40px_rgba(13,56,47,0.12)] md:p-5">
@@ -20,6 +25,9 @@ function VehicleCard({ vehicle, index, viewTo = "/vehicles" }) {
           <img
             src={imageSrc}
             alt={vehicle.name}
+            onError={() => {
+              if (imageSrc !== scooterImage) setFailedImage(imageSrc);
+            }}
             className="h-full w-full object-contain object-center transition duration-500 group-hover:scale-[1.04]"
             style={{ filter: "drop-shadow(0 18px 20px rgba(27, 45, 37, 0.12))" }}
           />
