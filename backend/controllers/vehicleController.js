@@ -104,9 +104,10 @@ function createVehicleController(databaseClient, presentationTable) {
       .from(VEHICLE_TABLE)
       .insert([req.body])
       .select();
-    if (error) {
-      throw new ApiError(500, "Failed to create vehicle", "DATABASE_ERROR");
-    }
+   if (error) {
+  console.error("Supabase error:", error);
+  throw new ApiError(500, "Failed to fetch vehicles", "DATABASE_ERROR");
+}
 
     return res.status(201).json({
       success: true,
