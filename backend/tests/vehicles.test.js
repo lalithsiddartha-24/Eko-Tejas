@@ -13,14 +13,39 @@ after(async () => {
 });
 
 test("public vehicle listing and presentation keep their response contracts", async () => {
-  const listResponse = await fetch(
+  const allResponse = await fetch(`${server.url}/api/vehicles`);
+  assert.equal(allResponse.status, 200);
+  const allList = await allResponse.json();
+  assert.equal(allList.success, true);
+  assert.equal(allList.data.length, 2);
+
+  const twoWheelerResponse = await fetch(
     `${server.url}/api/vehicles?category=two-wheeler`
   );
-  assert.equal(listResponse.status, 200);
-  const list = await listResponse.json();
-  assert.deepEqual(Object.keys(list).sort(), ["data", "success"]);
-  assert.equal(list.data.length, 1);
-  assert.equal(list.data[0].name, "City Scooter");
+  assert.equal(twoWheelerResponse.status, 200);
+  const twoList = await twoWheelerResponse.json();
+  assert.deepEqual(Object.keys(twoList).sort(), ["data", "success"]);
+  assert.equal(twoList.data.length, 1);
+  assert.equal(twoList.data[0].name, "City Scooter");
+  assert.equal(twoList.data[0].category, "two-wheeler");
+
+  const threeWheelerResponse = await fetch(
+    `${server.url}/api/vehicles?category=three-wheeler`
+  );
+  assert.equal(threeWheelerResponse.status, 200);
+  const threeList = await threeWheelerResponse.json();
+  assert.equal(threeList.success, true);
+  assert.equal(threeList.data.length, 1);
+  assert.equal(threeList.data[0].name, "Cargo EV");
+  assert.equal(threeList.data[0].category, "three-wheeler");
+
+  const normalizedResponse = await fetch(
+    `${server.url}/api/vehicles?category=two-wheelers`
+  );
+  assert.equal(normalizedResponse.status, 200);
+  const normalizedList = await normalizedResponse.json();
+  assert.equal(normalizedList.data.length, 1);
+  assert.equal(normalizedList.data[0].name, "City Scooter");
 
   const presentationResponse = await fetch(
     `${server.url}/api/vehicle-presentations/City%20Scooter`

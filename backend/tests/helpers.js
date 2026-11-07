@@ -1,4 +1,4 @@
-const { createApp } = require("../app");
+const { createApp } = require("../createApp");
 
 const seedVehicles = [
   { id: 1, name: "City Scooter", category: "two-wheeler", range: "100" },

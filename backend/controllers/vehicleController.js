@@ -52,11 +52,27 @@ function createVehicleController(databaseClient, presentationTable) {
 
     let query = databaseClient.from(VEHICLE_TABLE).select("*");
     if (category) {
-      query = query.eq("category", category);
+      const normalized = category.toLowerCase().replace(/_/g, "-");
+      let filterCategory = category;
+      if (
+        ["two-wheeler", "two-wheelers", "2-wheeler", "2-wheelers"].includes(
+          normalized
+        )
+      ) {
+        filterCategory = "two-wheeler";
+      } else if (
+        ["three-wheeler", "three-wheelers", "3-wheeler", "3-wheelers"].includes(
+          normalized
+        )
+      ) {
+        filterCategory = "three-wheeler";
+      }
+      query = query.eq("category", filterCategory);
     }
 
     const { data, error } = await query.order("id", { ascending: true });
     if (error) {
+      console.error("Supabase error in listVehicles:", error);
       throw new ApiError(500, "Failed to fetch vehicles", "DATABASE_ERROR");
     }
 
@@ -104,10 +120,10 @@ function createVehicleController(databaseClient, presentationTable) {
       .from(VEHICLE_TABLE)
       .insert([req.body])
       .select();
-   if (error) {
-  console.error("Supabase error:", error);
-  throw new ApiError(500, "Failed to fetch vehicles", "DATABASE_ERROR");
-}
+    if (error) {
+      console.error("Supabase error in createVehicle:", error);
+      throw new ApiError(500, "Failed to create vehicle", "DATABASE_ERROR");
+    }
 
     return res.status(201).json({
       success: true,
