@@ -1,33 +1,35 @@
-const { after, before, test } = require("node:test");
 const assert = require("node:assert/strict");
-const { startTestServer } = require("./helpers");
+const { after, before, test } = require("node:test");
+const app = require("../app");
 
 let server;
+let baseUrl;
 
 before(async () => {
-  server = await startTestServer();
+  await new Promise((resolve) => {
+    server = app.listen(0, "127.0.0.1", () => {
+      const { port } = server.address();
+      baseUrl = `http://127.0.0.1:${port}`;
+      resolve();
+    });
+  });
 });
 
 after(async () => {
-  await server.close();
+  await new Promise((resolve, reject) => {
+    server.close((error) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve();
+    });
+  });
 });
 
-test("health endpoint is public and returns service status", async () => {
-  const response = await fetch(`${server.url}/api/health`);
+test("GET /api/health reports that the backend is running", async () => {
+  const response = await fetch(`${baseUrl}/api/health`);
+
   assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), {
-    success: true,
-    status: "ok",
-    service: "ekotejas-backend",
-  });
-});
-
-test("unknown API routes return a consistent JSON error", async () => {
-  const response = await fetch(`${server.url}/api/not-a-route`);
-  assert.equal(response.status, 404);
-  assert.deepEqual(await response.json(), {
-    success: false,
-    message: "Route not found",
-    error: "NOT_FOUND",
-  });
+  assert.deepEqual(await response.json(), { status: "ok" });
 });

@@ -1,13 +1,9 @@
+require("dotenv").config();
+
 const app = require("./app");
-const port = Number(process.env.PORT || 5000);
 
-if (require.main === module) {
-  if (!Number.isInteger(port) || port < 1 || port > 65535) {
-    throw new Error("PORT must be an integer between 1 and 65535");
-  }
-  app.listen(port, () => {
-    console.info(`Eko Tejas backend listening on port ${port}`);
-  });
-}
+const port = process.env.PORT || 5000;
 
-module.exports = app;
+app.listen(port, () => {
+  console.log(`Backend listening on port ${port}`);
+});

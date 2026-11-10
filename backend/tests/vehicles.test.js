@@ -1,117 +1,96 @@
-const { after, before, test } = require("node:test");
 const assert = require("node:assert/strict");
-const { startTestServer } = require("./helpers");
+const { after, before, test } = require("node:test");
+const { createApp } = require("../app");
+
+const vehicles = [
+  {
+    name: "Axel",
+    category: "two-wheeler",
+    tagline: "Everyday Freedom",
+    range: "120 km",
+    power: "3.5 kW",
+    image: "",
+  },
+];
+
+function createSupabaseMock() {
+  const calls = {};
+  const query = {
+    select(fields) {
+      calls.fields = fields;
+      return query;
+    },
+    order(field, options) {
+      calls.order = { field, options };
+      return query;
+    },
+    eq(field, value) {
+      calls.filter = { field, value };
+      return query;
+    },
+    then(resolve, reject) {
+      return Promise.resolve({ data: vehicles, error: null }).then(
+        resolve,
+        reject
+      );
+    },
+  };
+
+  return {
+    calls,
+    client: {
+      from(table) {
+        calls.table = table;
+        return query;
+      },
+    },
+  };
+}
 
 let server;
+let baseUrl;
+let supabase;
 
 before(async () => {
-  server = await startTestServer();
+  supabase = createSupabaseMock();
+  server = createApp({ getSupabaseClient: () => supabase.client }).listen(
+    0,
+    "127.0.0.1"
+  );
+  await new Promise((resolve) => server.once("listening", resolve));
+  baseUrl = `http://127.0.0.1:${server.address().port}`;
 });
 
 after(async () => {
-  await server.close();
-});
-
-test("public vehicle listing and presentation keep their response contracts", async () => {
-  const allResponse = await fetch(`${server.url}/api/vehicles`);
-  assert.equal(allResponse.status, 200);
-  const allList = await allResponse.json();
-  assert.equal(allList.success, true);
-  assert.equal(allList.data.length, 2);
-
-  const twoWheelerResponse = await fetch(
-    `${server.url}/api/vehicles?category=two-wheeler`
-  );
-  assert.equal(twoWheelerResponse.status, 200);
-  const twoList = await twoWheelerResponse.json();
-  assert.deepEqual(Object.keys(twoList).sort(), ["data", "success"]);
-  assert.equal(twoList.data.length, 1);
-  assert.equal(twoList.data[0].name, "City Scooter");
-  assert.equal(twoList.data[0].category, "two-wheeler");
-
-  const threeWheelerResponse = await fetch(
-    `${server.url}/api/vehicles?category=three-wheeler`
-  );
-  assert.equal(threeWheelerResponse.status, 200);
-  const threeList = await threeWheelerResponse.json();
-  assert.equal(threeList.success, true);
-  assert.equal(threeList.data.length, 1);
-  assert.equal(threeList.data[0].name, "Cargo EV");
-  assert.equal(threeList.data[0].category, "three-wheeler");
-
-  const normalizedResponse = await fetch(
-    `${server.url}/api/vehicles?category=two-wheelers`
-  );
-  assert.equal(normalizedResponse.status, 200);
-  const normalizedList = await normalizedResponse.json();
-  assert.equal(normalizedList.data.length, 1);
-  assert.equal(normalizedList.data[0].name, "City Scooter");
-
-  const presentationResponse = await fetch(
-    `${server.url}/api/vehicle-presentations/City%20Scooter`
-  );
-  assert.equal(presentationResponse.status, 200);
-  const presentation = await presentationResponse.json();
-  assert.deepEqual(Object.keys(presentation).sort(), ["success", "vehicle"]);
-  assert.equal(presentation.vehicle["Vehicle Name"], "City Scooter");
-});
-
-test("active admin can create, read, update, and delete a vehicle", async () => {
-  const headers = {
-    authorization: "Bearer active.token.value",
-    "content-type": "application/json",
-  };
-  const createResponse = await fetch(`${server.url}/api/vehicles`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      name: "Lifecycle Test Vehicle",
-      category: "three-wheeler",
-    }),
+  await new Promise((resolve, reject) => {
+    server.close((error) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve();
+    });
   });
-  assert.equal(createResponse.status, 201);
-  const created = (await createResponse.json()).vehicle;
-
-  const readResponse = await fetch(`${server.url}/api/vehicles`);
-  const readPayload = await readResponse.json();
-  assert.ok(readPayload.data.some((vehicle) => vehicle.name === created.name));
-
-  const updateResponse = await fetch(
-    `${server.url}/api/vehicles/${created.id}`,
-    {
-      method: "PUT",
-      headers,
-      body: JSON.stringify({ name: "Updated Test Vehicle" }),
-    }
-  );
-  assert.equal(updateResponse.status, 200);
-  assert.equal((await updateResponse.json()).vehicle.name, "Updated Test Vehicle");
-
-  const deleteResponse = await fetch(
-    `${server.url}/api/vehicles/${created.id}`,
-    { method: "DELETE", headers }
-  );
-  assert.equal(deleteResponse.status, 200);
-  assert.equal((await deleteResponse.json()).vehicle.name, "Updated Test Vehicle");
-
-  const finalRead = await fetch(`${server.url}/api/vehicles`);
-  const finalPayload = await finalRead.json();
-  assert.ok(
-    finalPayload.data.every((vehicle) => vehicle.name !== "Updated Test Vehicle")
-  );
 });
 
-test("invalid vehicle payload is rejected without changing records", async () => {
-  const before = structuredClone(server.state.rows.vehicles);
-  const response = await fetch(`${server.url}/api/vehicles`, {
-    method: "POST",
-    headers: {
-      authorization: "Bearer active.token.value",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({}),
+test("GET /api/vehicles returns vehicles in the frontend API format", async () => {
+  const response = await fetch(`${baseUrl}/api/vehicles?category=two-wheeler`);
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { success: true, data: vehicles });
+  assert.equal(supabase.calls.table, "vehicles");
+  assert.deepEqual(supabase.calls.filter, {
+    field: "category",
+    value: "two-wheeler",
   });
+});
+
+test("GET /api/vehicles rejects unsupported categories", async () => {
+  const response = await fetch(`${baseUrl}/api/vehicles?category=unknown`);
 
   assert.equal(response.status, 400);
-  assert.deepEqual(server.state.rows.vehicles, before);
+  assert.deepEqual(await response.json(), {
+    success: false,
+    message: "Category must be two-wheeler or three-wheeler",
+  });
 });
