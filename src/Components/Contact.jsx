@@ -1,54 +1,82 @@
-function Contact()
-{
-    return(
-            <section className = "bg-[#F4F7F3] px-6 py-24 md:px-10 lg:px-16">
+import { Building2, Mail, MapPin } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import EnquiryForm from "./EnquiryForm";
+import Container from "./ui/Container";
+import Reveal from "./ui/Reveal";
+import SectionHeading from "./ui/SectionHeading";
 
-            <div className  = "mx-auto max-w-7xl">
-                <p className  = "text-xs tracking-[0.3em] font-bold text-[#79A88F]">Contact</p>
-                <h3 className = " mt-8 text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                    Touch with
-                    <span className = "block text-[#79A88F]">Us...</span>
-                </h3>
-                <div className=" mt-10 grid lg:grid-cols-2 gap-6">
-                    <div className  = "group  rounded-3xl  border border-white/10 bg-white/5 p-8 transition-all duration-300 hover:translate-y-2 hover:border-[#79A88F]/40 hover:bg-white/10 hover:shadow-2xl md:p-10">
-                        <h3 className="text-2xl font-bold tracking-[0.12em] text-[#173C34]">
-                        EKOTEJAS HEAD OFFICE
-                        </h3>
-                        <div className="mt-5 h-1 w-14 rounded-full bg-[#79A88F]" />
-                        <p className="mt-6 max-w-lg text-base leading-7 text-[#52635D]">
-                        1/137, Sreenilayam, KPS Complex,
-                        <br />
-                        Gooty – 515402,
-                        <br />
-                        Anantapur Dist, Andhra Pradesh
-                        </p>
-                        <div className="mt-8 space-y-2 text-base text- #52635D">
-                        <p>info@ekotejas.in</p>
-                        <p>admin@tejasevehicles.com</p>
-                        </div>
-                    </div>
-                    <div className  = "group  rounded-3xl  border border-white/10 bg-white/5 p-8 transition-all duration-300 hover:translate-y-2 hover:border-[#79A88F]/40 hover:bg-white/10 hover:shadow-2xl md:p-10">
-                        <h3 className="text-2xl font-bold tracking-[0.12em] text-[#173C34]">
-                        EKOTEJAS CORPORATE OFFICE
-                        </h3>
-                        <div className="mt-5 h-1 w-14 rounded-full bg-[#79A88F]" />
-                        <p className="mt-6 max-w-lg text-base leading-7 text-[#52635D]">
-                        #2, Tejashree Park Soc, S. NO 69, CTS No. 122/A
-                        <br />
-                        Gooty – 515402,
-                        <br />
-                        Erandawane, Pune – 411004, Maharashtra
-                        </p>
-                        <div className="mt-8 space-y-2 text-base text- #52635D">
-                        <p>sales@ekotejas.in</p>
-                        <p>sales.manager@ekotejas.in</p>
-                        <p>director.sales@ekotejas.in</p>
-                        </div>
-                    </div>
+const offices = [
+  {
+    title: "Head office",
+    address: ["1/137, Sreenilayam, KPS Complex", "Gooty – 515402", "Anantapur Dist, Andhra Pradesh"],
+    emails: ["info@ekotejas.in", "admin@tejasevehicles.com"],
+  },
+  {
+    title: "Corporate office",
+    address: ["#2, Tejashree Park Soc, S. No 69, CTS No. 122/A", "Erandawane, Pune – 411004", "Maharashtra"],
+    emails: ["sales@ekotejas.in", "sales.manager@ekotejas.in", "director.sales@ekotejas.in"],
+  },
+];
 
-                </div>
-            </div>
-            </section>
-    )
+function Contact() {
+  // Buttons like "Become a dealer" link here with { enquiryType: "dealership" }
+  // in the router state, so the form opens with the right topic selected.
+  const { state } = useLocation();
+  const presetType = state?.enquiryType || "general";
+
+  return (
+    <section id="contact" className="bg-white py-20 sm:py-28">
+      <Container className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+        <div>
+          <SectionHeading
+            eyebrow="Contact"
+            title="Let's get you"
+            accent="moving."
+            description="Questions about a vehicle, pricing, finance or dealership? Send us a message and our team will get back to you."
+          />
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+            {offices.map((office) => (
+              <Reveal key={office.title}>
+                <article className="h-full rounded-3xl border border-forest-900/8 bg-mint-50 p-6">
+                  <h3 className="flex items-center gap-2.5 font-display text-lg font-bold text-forest-900">
+                    <Building2 size={18} className="text-forest-600" aria-hidden="true" />
+                    {office.title}
+                  </h3>
+                  <div className="mt-4 flex gap-2.5 text-sm leading-6 text-muted">
+                    <MapPin size={16} className="mt-1 shrink-0 text-sage-500" aria-hidden="true" />
+                    {/* <address> is the right HTML tag for contact details. */}
+                    <address className="not-italic">
+                      {office.address.map((line) => (
+                        <span key={line} className="block">{line}</span>
+                      ))}
+                    </address>
+                  </div>
+                  <ul className="mt-4 space-y-1.5 border-t border-forest-900/8 pt-4 text-sm">
+                    {office.emails.map((email) => (
+                      <li key={email} className="flex items-center gap-2.5">
+                        <Mail size={15} className="shrink-0 text-sage-500" aria-hidden="true" />
+                        <a href={`mailto:${email}`} className="break-all font-medium text-forest-800 hover:text-forest-600 hover:underline">
+                          {email}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+
+        <Reveal className="relative self-start rounded-[2rem] border border-forest-900/8 bg-mint-50 p-6 shadow-soft sm:p-9">
+          <h3 className="font-display text-2xl font-bold text-forest-900">Send us a message</h3>
+          <p className="mb-7 mt-1.5 text-sm text-muted">Fields marked optional can be left empty.</p>
+          {/* `key` makes React start a fresh form when the preset topic changes. */}
+          <EnquiryForm key={presetType} defaultType={presetType} />
+        </Reveal>
+      </Container>
+    </section>
+  );
 }
+
 export default Contact;

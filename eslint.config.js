@@ -18,4 +18,18 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  // The backend runs on Node and uses CommonJS (require/module.exports),
+  // so it needs Node's globals instead of the browser's.
+  {
+    files: ['backend/**/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: globals.node,
+    },
+  },
+  // vite.config.js runs in Node too (it reads process.env).
+  {
+    files: ['vite.config.js'],
+    languageOptions: { globals: globals.node },
+  },
 ])

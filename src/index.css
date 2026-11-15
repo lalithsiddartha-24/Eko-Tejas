@@ -1,19 +1,93 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Manrope:wght@500;600;700;800&display=swap');
 @import "tailwindcss";
 
-* {
-  box-sizing: border-box;
+/*
+ * DESIGN TOKENS
+ * -------------
+ * Every colour and font the site uses is named ONCE here. Tailwind v4 turns
+ * each `--color-*` into utilities automatically, so `--color-forest-900`
+ * gives us `bg-forest-900`, `text-forest-900`, `border-forest-900/20`, etc.
+ *
+ * WHY: before, components typed hex codes by hand (#0B4B40, #073D34,
+ * #173C34...) and they slowly drifted apart. Now, if the brand green changes,
+ * we change one line here and the whole site follows.
+ */
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* Deep greens: dark sections, headings, primary text on light backgrounds */
+  --color-forest-950: #08201b;
+  --color-forest-900: #0f2e27;
+  --color-forest-800: #173c34;
+  --color-forest-700: #1f4d42;
+  --color-forest-600: #31705f;
+
+  /* Soft greens: labels, borders, quiet details */
+  --color-sage-500: #5d8a76;
+  --color-sage-300: #a9c7b7;
+
+  /* Light backgrounds */
+  --color-mint-50: #f4f7f3;
+  --color-mint-100: #e9f0eb;
+  --color-mint-200: #d6e3da;
+
+  /* The one bright accent. Used sparingly: main buttons and highlights. */
+  --color-volt: #b5f07a;
+  --color-volt-soft: #cdf7a3;
+
+  /* Text */
+  --color-ink: #13201c;
+  --color-muted: #56665f;
+
+  --shadow-soft: 0 1px 2px rgb(15 46 39 / 0.04), 0 12px 32px -12px rgb(15 46 39 / 0.14);
+  --shadow-lift: 0 2px 4px rgb(15 46 39 / 0.05), 0 24px 48px -16px rgb(15 46 39 / 0.22);
 }
 
-html {
-  scroll-behavior: smooth;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Leaves room for the sticky navbar when jumping to #anchors. */
+    scroll-padding-top: 6.5rem;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-mint-50);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+
+  ::selection {
+    background-color: var(--color-volt);
+    color: var(--color-forest-950);
+  }
 }
 
-body {
-  margin: 0;
-  font-family: "DM Sans", sans-serif;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
+/* A faint grid pattern used behind dark hero sections. */
+.bg-grid-dark {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at 60% 40%, black 30%, transparent 75%);
+}
+
+/* Moving light streak across the featured care plan card. */
 .premium-plan-card::after {
   position: absolute;
   z-index: 0;
@@ -24,19 +98,16 @@ body {
   background: linear-gradient(
     105deg,
     transparent,
-    rgb(220 245 229 / 5%) 35%,
-    rgb(220 245 229 / 20%) 50%,
-    rgb(220 245 229 / 5%) 65%,
+    rgb(205 247 163 / 4%) 35%,
+    rgb(205 247 163 / 14%) 50%,
+    rgb(205 247 163 / 4%) 65%,
     transparent
   );
-  opacity: 1;
   transform: translateX(-120%) skewX(-18deg);
-  animation: premium-plan-shine 5s ease-in-out infinite;
+  animation: premium-plan-shine 6s ease-in-out infinite;
 }
 
-.premium-plan-card > p,
-.premium-plan-card > h3,
-.premium-plan-card > button {
+.premium-plan-card > * {
   position: relative;
   z-index: 1;
 }
@@ -47,17 +118,10 @@ body {
     opacity: 0;
     transform: translateX(-120%) skewX(-18deg);
   }
-
   22% {
     opacity: 1;
   }
-
-  72% {
-    opacity: 0;
-    transform: translateX(520%) skewX(-18deg);
-  }
-
-  82%,
+  72%,
   100% {
     opacity: 0;
     transform: translateX(520%) skewX(-18deg);

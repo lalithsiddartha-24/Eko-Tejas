@@ -1,148 +1,148 @@
-import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowUpRight, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/Group-1941.webp";
+import Button from "./ui/Button";
 
-function Navbar({ onNavigate }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { pathname } = useLocation();
+/*
+ * WHY <NavLink> instead of buttons with onClick + navigate():
+ * links are real <a> tags, so people can right-click "open in new tab",
+ * search engines can follow them, and NavLink tells us which one is active.
+ */
+const links = [
+  { label: "Home", to: "/", end: true },
+  { label: "2-Wheelers", to: "/twowheelers" },
+  { label: "3-Wheelers", to: "/vehicles" },
+  { label: "Service", to: "/#service" },
+  { label: "Contact", to: "/#contact" },
+];
 
-  const handleNavigate = (page) => {
-    setMenuOpen(false);
-    onNavigate(page);
-  };
+function Navbar() {
+  const [openPath, setOpenPath] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const { pathname, hash } = useLocation();
+  const reduceMotion = useReducedMotion();
 
-  const desktopLinks = [
-    { label: "Home", page: "home" },
-    { label: "2-Wheelers", page: "twowheelers", hasChevron: true },
-    { label: "3-Wheelers", page: "vehicles", hasChevron: true },
-    { label: "Media", page: "home" },
-  ];
+  // The mobile menu is "open" only for the page it was opened on, so moving
+  // to a new page closes it automatically (no extra effect needed).
+  const menuOpen = openPath === pathname + hash;
+  const toggleMenu = () => setOpenPath(menuOpen ? null : pathname + hash);
+  const closeMenu = () => setOpenPath(null);
+
+  // Add a stronger shadow once the page is scrolled, so the bar "lifts".
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Hash links ("/#contact") shouldn't look "active" like a page link.
+  const isActive = (link, active) => (link.to.includes("#") ? `/${hash}` === link.to && pathname === "/" : active);
 
   return (
-    <motion.nav
-      initial={{ y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.45, ease: "easeOut" }}
-      className="sticky top-0 z-50 w-full px-4 pt-3 md:px-8"
-    >
-      <div className="relative mx-auto flex h-[70px] max-w-7xl items-center justify-between rounded-2xl border border-[#0B4B40]/10 bg-white/95 px-4 shadow-[0_8px_30px_rgba(11,75,64,0.08)] backdrop-blur-md md:px-7">
-        <button
-          type="button"
-          onClick={() => handleNavigate("home")}
+    <header className="sticky top-0 z-50 px-3 pt-3 sm:px-5">
+      <nav
+        aria-label="Main"
+        className={`relative mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl border bg-white/90 pl-3 pr-2 backdrop-blur-xl transition-shadow duration-300 sm:h-[4.25rem] sm:pl-4 ${
+          scrolled ? "border-forest-900/10 shadow-lift" : "border-white/60 shadow-soft"
+        }`}
+      >
+        <Link
+          to="/"
           aria-label="Eko Tejas home"
-          className="flex shrink-0 items-center rounded-xl transition hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#31705F]"
+          className="flex items-center gap-2.5 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-forest-600"
         >
-          <img src={logo} alt="Eko Tejas" className="h-11 w-auto object-contain" />
-        </button>
+          <img src={logo} alt="" className="h-10 w-auto object-contain sm:h-11" />
+        </Link>
 
-        <div className="hidden items-center rounded-full bg-[#F3F7F4] p-1 lg:flex">
-          {desktopLinks.map((link) => {
-            const isActive =
-              (link.page === "home" && pathname === "/" && link.label === "Home") ||
-              (link.page !== "home" &&
-                pathname === `/${link.page}`);
-
-            return (
-              <motion.button
-                key={link.label}
-                type="button"
-                onClick={() => handleNavigate(link.page)}
-                whileTap={{ scale: 0.97 }}
-                className={[
-                  "relative flex items-center gap-1 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#31705F]",
-                  isActive
-                    ? "bg-white text-[#0B4B40] shadow-sm"
-                    : "text-[#52635D] hover:text-[#0B4B40]",
-                ].join(" ")}
+        <ul className="hidden items-center gap-1 lg:flex">
+          {links.map((link) => (
+            <li key={link.label}>
+              <NavLink
+                to={link.to}
+                end={link.end}
+                className={({ isActive: active }) =>
+                  `relative rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                    isActive(link, active)
+                      ? "bg-forest-900 text-white"
+                      : "text-muted hover:bg-mint-100 hover:text-forest-900"
+                  }`
+                }
               >
                 {link.label}
-                {link.hasChevron && <ChevronDown size={14} />}
-                {!isActive && (
-                  <motion.span
-                    className="absolute inset-0 -z-10 rounded-full bg-white"
-                    initial={{ opacity: 0, scale: 0.85 }}
-                    whileHover={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.18 }}
-                  />
-                )}
-              </motion.button>
-            );
-          })}
-        </div>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
 
-        <div className="flex items-center gap-3">
-          <motion.button
-            whileHover={{ y: -2, scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            className="hidden items-center gap-2 rounded-full bg-[#073D34] px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#0E5A4D] hover:shadow-md sm:flex"
+        <div className="flex items-center gap-2">
+          <Button
+            to="/#contact"
+            state={{ enquiryType: "dealership" }}
+            variant="dark"
+            className="hidden sm:inline-flex"
           >
-            Become a Dealer
-            <ArrowUpRight size={17} />
-          </motion.button>
+            Become a dealer
+            <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </Button>
 
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F3F7F4] text-[#0B4B40] transition-colors hover:bg-[#E7F0E9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#31705F] lg:hidden"
+            type="button"
+            onClick={toggleMenu}
+            className="grid h-11 w-11 place-items-center rounded-xl bg-mint-100 text-forest-900 transition-colors hover:bg-mint-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 lg:hidden"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={menuOpen ? "close" : "open"}
-                initial={{ opacity: 0, rotate: -45, scale: 0.8 }}
-                animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                exit={{ opacity: 0, rotate: 45, scale: 0.8 }}
-                transition={{ duration: 0.16 }}
-                className="flex"
-              >
-                {menuOpen ? <X size={23} /> : <Menu size={23} />}
-              </motion.span>
-            </AnimatePresence>
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
         <AnimatePresence>
           {menuOpen && (
             <motion.div
-              initial={{ height: 0, opacity: 0, y: -8 }}
-              animate={{ height: "auto", opacity: 1, y: 0 }}
-              exit={{ height: 0, opacity: 0, y: -8 }}
-              transition={{ duration: 0.24, ease: "easeInOut" }}
-              className="absolute left-0 right-0 top-[calc(100%+0.5rem)] overflow-hidden rounded-2xl border border-[#0B4B40]/10 bg-white shadow-[0_12px_32px_rgba(11,75,64,0.12)] lg:hidden"
+              id="mobile-menu"
+              initial={reduceMotion ? false : { opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              className="absolute inset-x-0 top-[calc(100%+0.5rem)] origin-top rounded-2xl border border-forest-900/10 bg-white p-2 shadow-lift lg:hidden"
             >
-              <div className="flex flex-col gap-1 p-3">
-                {[
-                  { label: "Home", page: "home" },
-                  { label: "2-Wheelers", page: "twowheelers" },
-                  { label: "3-Wheelers", page: "vehicles" },
-                ].map((link, index) => (
-                  <motion.button
-                    key={link.label}
-                    type="button"
-                    initial={{ x: -12, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => handleNavigate(link.page)}
-                    className="rounded-xl px-4 py-3 text-left font-medium text-[#52635D] transition-colors hover:bg-[#F3F7F4] hover:text-[#0B4B40]"
-                  >
-                    {link.label}
-                  </motion.button>
+              <ul className="flex flex-col">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <NavLink
+                      to={link.to}
+                      end={link.end}
+                      onClick={closeMenu}
+                      className={({ isActive: active }) =>
+                        `flex items-center justify-between rounded-xl px-4 py-3.5 font-semibold transition-colors ${
+                          isActive(link, active) ? "bg-mint-100 text-forest-900" : "text-muted hover:bg-mint-50 hover:text-forest-900"
+                        }`
+                      }
+                    >
+                      {link.label}
+                      <ArrowUpRight size={16} className="opacity-40" />
+                    </NavLink>
+                  </li>
                 ))}
-                <motion.button
-                  whileTap={{ scale: 0.98 }}
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-[#073D34] px-5 py-3 text-sm font-semibold text-white"
-                >
-                  Become a Dealer
-                  <ArrowUpRight size={17} />
-                </motion.button>
-              </div>
+              </ul>
+              <Button
+                to="/#contact"
+                state={{ enquiryType: "dealership" }}
+                onClick={closeMenu}
+                variant="dark"
+                className="mt-2 w-full sm:hidden"
+              >
+                Become a dealer <ArrowUpRight size={16} />
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-    </motion.nav>
+      </nav>
+    </header>
   );
 }
 

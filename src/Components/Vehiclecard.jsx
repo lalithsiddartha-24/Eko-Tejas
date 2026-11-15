@@ -1,71 +1,105 @@
-import { useState } from "react";
+import { ArrowRight, Gauge, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import scooterImage from "../assets/Modern Mint-Accent Electric Scooter.png";
+import { formatSpecificationValue, isThreeWheelerCategory } from "../utils/vehicleFormat";
+import VehicleImage from "./ui/VehicleImage";
+import { getVehicleMedia } from "./vehicleShowcaseUtils";
 
+/**
+ * One vehicle in the listing grid.
+ *
+ * Design choices:
+ *   - The photo area is the hero of the card (big, soft gradient behind it).
+ *   - Range and power are shown as "spec pills": the two numbers buyers
+ *     compare first, readable at a glance.
+ *   - Two clear actions: see details, or jump straight to booking a test
+ *     drive (`#book` scrolls to the form on the detail page).
+ */
 function VehicleCard({ vehicle, index, viewTo = "/vehicles" }) {
-  const [failedImage, setFailedImage] = useState("");
-  const imageSrc =
-    vehicle.image && vehicle.image !== failedImage
-      ? vehicle.image
-      : scooterImage;
+  const threeWheeler = isThreeWheelerCategory(vehicle.category);
+  // Use the API image if there is one; otherwise the first gallery photo we
+  // know about (the same source the detail page uses). If neither exists,
+  // <VehicleImage> draws its placeholder.
+  const media = getVehicleMedia(vehicle);
+  const photo = vehicle.image || media.images[0]?.src || [...media.colorImages.values()][0]?.[0]?.src;
+  const specs = [
+    vehicle.range && { icon: Gauge, label: "Range", value: formatSpecificationValue("range", vehicle.range) },
+    vehicle.power && { icon: Zap, label: "Power", value: formatSpecificationValue("power", vehicle.power) },
+  ].filter(Boolean);
 
   return (
-    <article className="group flex h-full min-h-[520px] flex-col overflow-hidden rounded-[30px] border border-[#D9E5DE] bg-[#F5F8F6] p-4 shadow-[0_14px_35px_rgba(13,56,47,0.07)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_18px_40px_rgba(13,56,47,0.12)] md:p-5">
-      <div className="flex items-center justify-between">
-        <span className="text-4xl font-black tracking-[-0.08em] text-[#0B4B40]/10 md:text-5xl">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-forest-900/8 bg-white p-2.5 shadow-soft transition duration-500 hover:-translate-y-1 hover:shadow-lift has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-forest-600 motion-reduce:hover:translate-y-0">
+      <div className="relative overflow-hidden rounded-[1.35rem]">
+        <VehicleImage
+          src={photo}
+          name={vehicle.name}
+          alt=""
+          isThreeWheeler={threeWheeler}
+          className="aspect-[4/3] w-full"
+          imgClassName="transition-transform duration-700 group-hover:scale-[1.05] motion-reduce:transition-none"
+        />
+        <span className="absolute left-4 top-4 rounded-full bg-white/80 px-2.5 py-1 font-display text-xs font-bold text-forest-700 backdrop-blur">
           {String(index + 1).padStart(2, "0")}
         </span>
-        <span className="rounded-full border border-[#0B4B40]/10 bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#31705F]">
-          EV
-        </span>
       </div>
 
-      <div className="mt-3 overflow-hidden rounded-[24px] bg-gradient-to-br from-[#F4F8F5] via-[#EEF4F1] to-[#E7F0EB]">
-        <div className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden">
-          <img
-            src={imageSrc}
-            alt={vehicle.name}
-            onError={() => {
-              if (imageSrc !== scooterImage) setFailedImage(imageSrc);
-            }}
-            className="h-full w-full object-contain object-center transition duration-500 group-hover:scale-[1.04]"
-            style={{ filter: "drop-shadow(0 18px 20px rgba(27, 45, 37, 0.12))" }}
-          />
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <h3 className="text-[1.8rem] font-bold leading-none tracking-[-0.04em] text-[#173C34]">
-          {vehicle.name}
+      <div className="flex flex-1 flex-col px-3.5 pb-3.5 pt-5 sm:px-4">
+        <h3 className="font-display text-2xl font-bold tracking-[-0.03em] text-forest-900">
+          {/* "Stretched link": the ::after layer covers the whole card, so a click anywhere opens the details. */}
+          <Link to={viewTo} state={{ vehicle }} className="outline-none after:absolute after:inset-0 after:content-[''] focus-visible:underline">
+            {vehicle.name}
+          </Link>
         </h3>
-        <p className="mt-2 text-sm text-[#52635D]">{vehicle.tagline}</p>
-      </div>
+        {vehicle.tagline && <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-muted">{vehicle.tagline}</p>}
 
-      <div className="mt-6 grid grid-cols-2 gap-4 border-t border-[#0B4B40]/10 pt-5">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#52635D]">Power</p>
-          <p className="mt-2 text-base font-semibold text-[#173C34]">{vehicle.power}</p>
+        {specs.length > 0 && (
+          <dl className="mt-5 grid grid-cols-2 gap-2">
+            {specs.map(({ icon: Icon, label, value }) => (
+              <div key={label} className="rounded-2xl bg-mint-50 px-3.5 py-3">
+                <dt className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+                  <Icon size={12} className="text-forest-600" aria-hidden="true" />
+                  {label}
+                </dt>
+                <dd className="mt-1 font-display text-base font-bold text-forest-900">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
+        <div className="mt-auto flex items-center gap-2 pt-5">
+          {/* `relative z-10` lifts this link above the card-wide click area. */}
+          <Link
+            to={`${viewTo}#book`}
+            className="relative z-10 inline-flex h-11 flex-1 items-center justify-center rounded-full border border-forest-900/15 px-4 text-sm font-semibold text-forest-900 transition-colors hover:border-forest-900/40 hover:bg-mint-50"
+          >
+            Book test drive
+          </Link>
+          <span
+            aria-hidden="true"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-forest-900 text-white transition-colors group-hover:bg-volt group-hover:text-forest-950"
+          >
+            <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
+          </span>
         </div>
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#52635D]">Range</p>
-          <p className="mt-2 text-base font-semibold text-[#173C34]">{vehicle.range}</p>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-1 gap-3 pt-6 sm:grid-cols-2">
-        <Link
-          to={viewTo}
-          state={{ vehicle }}
-          className="rounded-full bg-[#0B4B40] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#173C34]"
-        >
-          View
-        </Link>
-
-        <button className="rounded-full border border-[#0B4B40]/20 bg-white px-4 py-3 text-sm font-semibold text-[#0B4B40] transition hover:bg-[#F4F7F3]">
-          View Quotation
-        </button>
       </div>
     </article>
+  );
+}
+
+/** Grey placeholder shapes shown while vehicles are loading. */
+export function VehicleCardSkeleton() {
+  return (
+    <div aria-hidden="true" className="flex flex-col rounded-[1.75rem] border border-forest-900/8 bg-white p-2.5">
+      <div className="aspect-[4/3] animate-pulse rounded-[1.35rem] bg-mint-100" />
+      <div className="space-y-3 px-4 pb-4 pt-6">
+        <div className="h-6 w-1/2 animate-pulse rounded-full bg-mint-100" />
+        <div className="h-4 w-3/4 animate-pulse rounded-full bg-mint-100" />
+        <div className="grid grid-cols-2 gap-2 pt-3">
+          <div className="h-16 animate-pulse rounded-2xl bg-mint-50" />
+          <div className="h-16 animate-pulse rounded-2xl bg-mint-50" />
+        </div>
+        <div className="h-11 animate-pulse rounded-full bg-mint-50" />
+      </div>
+    </div>
   );
 }
 

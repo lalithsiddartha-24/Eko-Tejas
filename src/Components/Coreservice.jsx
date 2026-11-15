@@ -1,64 +1,77 @@
-function Coreservice() {
-    const services = [
+import { Brush, Cog, Gauge, ShieldCheck, Sparkles, Wrench } from "lucide-react";
+import Container from "./ui/Container";
+import Reveal from "./ui/Reveal";
+import SectionHeading from "./ui/SectionHeading";
+
+const services = [
   {
-    title: "FULL SERVICE",
-    description:
-      "Driving the Electric Future. Innovative EV models, sustainable technology, global charging solutions, and exceptional customer support.",
+    icon: ShieldCheck,
+    title: "Full service",
+    description: "Complete care for your EV: battery health, brakes, electricals and a full road test.",
   },
   {
-    title: "REGULAR SERVICE",
-    description:
-      "Premium EV servicing, maintenance, repairs, and expert support. Ensuring your electric vehicle stays efficient and reliable on the road.",
+    icon: Wrench,
+    title: "Regular service",
+    description: "Routine maintenance and repairs that keep your vehicle efficient and reliable.",
   },
   {
-    title: "FORK SERVICE",
-    description:
-      "Specialized EV fork servicing for optimum performance. Certified technicians, genuine parts, and quick turnaround for a smooth and safe ride.",
+    icon: Cog,
+    title: "Fork service",
+    description: "Specialised fork servicing with genuine parts for a smooth and safe ride.",
   },
   {
-    title: "MAJOR OVERHAUL",
-    description:
-      "New look, streamlined navigation, interactive tools, enhanced specs, eco-friendly features, and seamless user interface. Explore now!",
+    icon: Sparkles,
+    title: "Major overhaul",
+    description: "A deep refresh of worn components to bring an older vehicle back to its best.",
   },
   {
-    title: "TUNE-UP",
-    description:
-      "Enhance your EV’s performance with our expert tune-up service. Optimize efficiency, extend range, and ensure a smooth, eco-friendly ride.",
+    icon: Gauge,
+    title: "Tune-up",
+    description: "Optimise efficiency and range with an expert check of motor and controller settings.",
   },
   {
-    title: "PAINTING",
-    description:
-    "Transform your EV with a stunning new paint job. Choose from a range of vibrant colors and showcase your style on the road.",
-},
+    icon: Brush,
+    title: "Painting",
+    description: "Give your EV a fresh look with a professional paint job in the colour you love.",
+  },
 ];
-return (
-    <section id = "core-service" className=" bg-[#F4F7F3] px-6 py-24 md:px-10 lg:px-16">
-        <div className = "mx-auto  max-w-7xl">
-            <p className = "text-xs tracking-[0.3em] font-bold text-[#79A88F]">
-                Core-Service
-            </p>
-            <h2 className = " mt-4 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-                Care for your
-                <span className = "block text-[#79A88F]">
-                    Future
-                </span>
-            </h2>
-            <div className  = "mt-16 grid grid-rows-2 grid-cols-3 gap-6 ">
-            {services.map((service, index) => (
-            <div key={service.title}   className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 md:p-8 p-6 transition-all duration-500 hover:-translate-y-2 hover:border-[#79A88F]/50 hover:bg-white/10 hover:shadow-2xl min-h-[300px] flex flex-col mt-auto flex items-center justify-between"
->               <span className="text-6xl font-bold text-[#0B4B40]/10 transition-colors duration-500 group-hover:text-[#79A88F]/30">
-                {String(index + 1).padStart(2, "0")}
-                </span>
-              <h3 className="mt-8 text-2xl font-bold text-[#173C34] transition-colors duration-300 group-hover:text-[#31705F]">
-            {service.title}
-              </h3>
-                <p className = "mt-4 leading-7  text-gray-700">
-                    {service.description}
-                </p>
-            </div>
-))}
-            </div>
+
+/**
+ * Light "core services" grid.
+ * WHY the grid classes changed: the old grid was always 3 columns
+ * (`grid-cols-3`), so on a phone each card was squeezed to ~100px wide.
+ * Now it is 1 column on phones, 2 on tablets and 3 on desktops.
+ */
+function Coreservice() {
+  return (
+    <section id="core-service" className="py-20 sm:py-28">
+      <Container>
+        <SectionHeading
+          eyebrow="Core services"
+          title="Care for your"
+          accent="future."
+          description="Certified technicians, genuine parts and quick turnaround, whatever your vehicle needs."
+        />
+
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map(({ icon: Icon, title, description }, index) => (
+            <Reveal key={title} delay={(index % 3) * 0.05}>
+              <article className="group relative h-full overflow-hidden rounded-3xl border border-forest-900/8 bg-white p-7 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-forest-600/30 hover:shadow-lift motion-reduce:hover:translate-y-0">
+                <div className="flex items-start justify-between">
+                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-mint-100 text-forest-700 transition-colors group-hover:bg-forest-900 group-hover:text-volt">
+                    <Icon size={21} strokeWidth={1.8} aria-hidden="true" />
+                  </span>
+                  <span aria-hidden="true" className="font-display text-4xl font-extrabold tracking-tighter text-forest-900/[0.07]">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <h3 className="mt-8 font-display text-xl font-bold text-forest-900">{title}</h3>
+                <p className="mt-2 text-[0.95rem] leading-7 text-muted">{description}</p>
+              </article>
+            </Reveal>
+          ))}
         </div>
+      </Container>
     </section>
   );
 }
