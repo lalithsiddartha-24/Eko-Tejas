@@ -1,96 +1,97 @@
 const assert = require("node:assert/strict");
-const { after, before, test } = require("node:test");
-const { createApp } = require("../app");
+const { after, before, beforeEach, test } = require("node:test");
+const { installFakeSupabase } = require("./helpers/fakeSupabase");
 
-const vehicles = [
-  {
-    name: "Axel",
-    category: "two-wheeler",
-    tagline: "Everyday Freedom",
-    range: "120 km",
-    power: "3.5 kW",
-    image: "",
-  },
-];
+// Must run BEFORE requiring the app, so services pick up the fake.
+const fake = installFakeSupabase();
+const app = require("../src/app");
 
-function createSupabaseMock() {
-  const calls = {};
-  const query = {
-    select(fields) {
-      calls.fields = fields;
-      return query;
-    },
-    order(field, options) {
-      calls.order = { field, options };
-      return query;
-    },
-    eq(field, value) {
-      calls.filter = { field, value };
-      return query;
-    },
-    then(resolve, reject) {
-      return Promise.resolve({ data: vehicles, error: null }).then(
-        resolve,
-        reject
-      );
-    },
-  };
-
-  return {
-    calls,
-    client: {
-      from(table) {
-        calls.table = table;
-        return query;
-      },
-    },
-  };
-}
+const axel = {
+  id: 1,
+  name: "Axel",
+  category: "two-wheeler",
+  tagline: "Everyday Freedom",
+  range: "120 km",
+  power: "3.5 kW",
+  image: "",
+};
 
 let server;
 let baseUrl;
-let supabase;
 
 before(async () => {
-  supabase = createSupabaseMock();
-  server = createApp({ getSupabaseClient: () => supabase.client }).listen(
-    0,
-    "127.0.0.1"
-  );
+  server = app.listen(0, "127.0.0.1");
   await new Promise((resolve) => server.once("listening", resolve));
   baseUrl = `http://127.0.0.1:${server.address().port}`;
 });
 
-after(async () => {
-  await new Promise((resolve, reject) => {
-    server.close((error) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve();
-    });
-  });
+after(() => new Promise((resolve) => server.close(resolve)));
+
+beforeEach(() => {
+  fake.calls = [];
+  fake.result = { data: [axel], error: null };
 });
 
-test("GET /api/vehicles returns vehicles in the frontend API format", async () => {
-  const response = await fetch(`${baseUrl}/api/vehicles?category=two-wheeler`);
+const get = async (path) => {
+  const response = await fetch(`${baseUrl}${path}`);
+  return { status: response.status, body: await response.json() };
+};
 
-  assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { success: true, data: vehicles });
-  assert.equal(supabase.calls.table, "vehicles");
-  assert.deepEqual(supabase.calls.filter, {
-    field: "category",
-    value: "two-wheeler",
-  });
+test("GET /api/health works", async () => {
+  const { status, body } = await get("/api/health");
+  assert.equal(status, 200);
+  assert.equal(body.success, true);
 });
 
-test("GET /api/vehicles rejects unsupported categories", async () => {
-  const response = await fetch(`${baseUrl}/api/vehicles?category=unknown`);
+test("GET /api/vehicles?category=two-wheeler filters by category", async () => {
+  const { status, body } = await get("/api/vehicles?category=Two-Wheeler");
 
-  assert.equal(response.status, 400);
-  assert.deepEqual(await response.json(), {
-    success: false,
-    message: "Category must be two-wheeler or three-wheeler",
-  });
+  assert.equal(status, 200);
+  assert.deepEqual(body, { success: true, message: "Vehicles fetched", data: [axel] });
+  assert.deepEqual(fake.calls[0], ["from", "vehicles"]);
+  // Zod lower-cased "Two-Wheeler" before it reached the service.
+  assert.ok(fake.calls.some((c) => c[0] === "eq" && c[1] === "category" && c[2] === "two-wheeler"));
+});
+
+test("GET /api/vehicles without category returns all and does not filter", async () => {
+  const { status } = await get("/api/vehicles");
+  assert.equal(status, 200);
+  assert.ok(!fake.calls.some((c) => c[0] === "eq"));
+});
+
+test("GET /api/vehicles rejects an unknown category with 400 before touching the DB", async () => {
+  const { status, body } = await get("/api/vehicles?category=truck");
+
+  assert.equal(status, 400);
+  assert.equal(body.message, "Validation failed");
+  assert.equal(body.errors[0].field, "category");
+  assert.equal(fake.calls.length, 0);
+});
+
+test("GET /api/vehicles/:name returns one vehicle by exact name", async () => {
+  fake.result = { data: axel, error: null };
+  const { status, body } = await get(`/api/vehicles/${encodeURIComponent("Axel")}`);
+
+  assert.equal(status, 200);
+  assert.deepEqual(body.data, axel);
+  assert.ok(fake.calls.some((c) => c[0] === "eq" && c[1] === "name" && c[2] === "Axel"));
+});
+
+test("GET /api/vehicles/:name returns 404 when no vehicle matches", async () => {
+  fake.result = { data: null, error: null };
+  const { status, body } = await get("/api/vehicles/Nope");
+
+  assert.equal(status, 404);
+  assert.equal(body.success, false);
+  assert.equal(body.message, 'Vehicle "Nope" not found');
+});
+
+test("a database error becomes a generic 500 without leaking details", async () => {
+  fake.result = { data: null, error: { message: 'relation "vehicles" does not exist' } };
+  const { status, body } = await get("/api/vehicles");
+
+  assert.equal(status, 500);
+  // The service replaced the raw Supabase error with its own safe message.
+  assert.equal(body.message, "Could not load vehicles");
+  assert.ok(!JSON.stringify(body).includes("relation"));
 });

@@ -146,15 +146,15 @@ function VehiclePresentation() {
 
     const controller = new AbortController();
     fetch(
-      `/api/vehicle-presentations/${encodeURIComponent(vehicleName)}`,
+      `/api/vehicles/${encodeURIComponent(vehicleName)}`,
       { signal: controller.signal },
     )
       .then(async (response) => {
         const payload = await readApiJson(response);
-        if (!payload.success || !payload.vehicle) {
+        if (!payload.success || !payload.data) {
           throw new Error(payload.message || `HTTP ${response.status}`);
         }
-        return payload.vehicle;
+        return payload.data;
       })
       .then((data) => {
         setPresentation({ vehicleName, vehicle: data, error: "" });
