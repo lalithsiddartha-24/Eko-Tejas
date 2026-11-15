@@ -38,8 +38,16 @@ function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Hash links ("/#contact") shouldn't look "active" like a page link.
-  const isActive = (link, active) => (link.to.includes("#") ? `/${hash}` === link.to && pathname === "/" : active);
+  // NavLink only compares the PATH and ignores the "#hash" part, so on
+  // "/#service" it thinks Home ("/") is active too. We decide ourselves:
+  //   - section links ("/#service") are active when the URL has that hash
+  //   - Home is active only on "/" with NO section hash
+  //   - other pages ("/twowheelers") use NavLink's normal answer
+  const isActive = (link, active) => {
+    if (link.to.includes("#")) return pathname === "/" && `/${hash}` === link.to;
+    if (link.to === "/") return pathname === "/" && !hash;
+    return active;
+  };
 
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 sm:px-5">
