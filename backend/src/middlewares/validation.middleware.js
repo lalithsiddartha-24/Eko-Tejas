@@ -43,10 +43,17 @@ const validate = (schemas) => (req, res, next) => {
     if (error instanceof ZodError) {
       // Turn Zod's detailed report into a simple list the frontend can show
       // next to each form field: [{ field: "phone", message: "..." }]
-      const errors = error.issues.map((issue) => ({
-        field: issue.path.join("."),
-        message: issue.message,
-      }));
+      const errors = error.issues.flatMap((issue) =>
+        // WHY special-case: for .strict() schemas Zod reports extra keys on
+        // the parent object (path = []). Give each extra key its own entry,
+        // so the client sees exactly which field isn't allowed.
+        issue.code === "unrecognized_keys"
+          ? issue.keys.map((key) => ({
+              field: [...issue.path, key].join("."),
+              message: `"${key}" is not allowed`,
+            }))
+          : [{ field: issue.path.join("."), message: issue.message }]
+      );
       return next(ApiError.badRequest("Validation failed", errors));
     }
     next(error);

@@ -6,14 +6,32 @@
  * could write junk rows. We swap config/supabase.js for this fake BEFORE the
  * app loads. Services then talk to the fake without knowing the difference.
  *
- * Each test sets `fake.result` to what "the database" should return and then
- * checks `fake.calls` to see what query the service built.
+ * In a test:
+ *   fake.queue(result1, result2)  -> what each `await query` returns, in order
+ *                                    (one request can run several queries)
+ *   fake.result = {...}           -> fallback when the queue is empty
+ *   fake.users[token] = user      -> which tokens auth.getUser() accepts
+ *   fake.calls                    -> every builder call, to check the query
  */
 
 const path = require("node:path");
 
 function installFakeSupabase() {
-  const fake = { calls: [], result: { data: [], error: null } };
+  const fake = {
+    calls: [],
+    pending: [],
+    result: { data: [], error: null },
+    users: {},
+    queue(...results) {
+      this.pending.push(...results);
+    },
+    reset() {
+      this.calls = [];
+      this.pending = [];
+      this.result = { data: [], error: null };
+      this.users = {};
+    },
+  };
 
   // Every query-builder method records itself and returns the builder, the
   // same way supabase-js chains: from().select().eq().order()...
@@ -22,8 +40,11 @@ function installFakeSupabase() {
     {
       get(_, method) {
         if (method === "then") {
-          // `await query` resolves to whatever the test configured.
-          return (resolve, reject) => Promise.resolve(fake.result).then(resolve, reject);
+          // `await query` resolves to the next queued result (or the fallback).
+          return (resolve, reject) => {
+            const next = fake.pending.length ? fake.pending.shift() : fake.result;
+            return Promise.resolve(next).then(resolve, reject);
+          };
         }
         return (...args) => {
           fake.calls.push([method, ...args]);
@@ -35,8 +56,16 @@ function installFakeSupabase() {
 
   const supabase = {
     from(table) {
-      fake.calls = [["from", table]];
+      fake.calls.push(["from", table]);
       return builder;
+    },
+    auth: {
+      async getUser(token) {
+        const user = fake.users[token];
+        return user
+          ? { data: { user }, error: null }
+          : { data: { user: null }, error: { message: "invalid JWT" } };
+      },
     },
   };
 

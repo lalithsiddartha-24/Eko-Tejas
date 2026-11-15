@@ -28,7 +28,7 @@ before(async () => {
 after(() => new Promise((resolve) => server.close(resolve)));
 
 beforeEach(() => {
-  fake.calls = [];
+  fake.reset();
   fake.result = { data: [axel], error: null };
 });
 

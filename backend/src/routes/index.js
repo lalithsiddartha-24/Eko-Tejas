@@ -21,7 +21,7 @@ router.get("/health", (req, res) => {
 
 // Feature routers get added here module by module:
 router.use("/vehicles", require("./vehicle.routes"));       // Module 2
-// router.use("/bookings", require("./booking.routes"));    // Module 3
-// router.use("/enquiries", require("./enquiry.routes"));   // Module 4
+router.use("/bookings", require("./booking.routes"));       // Module 3
+router.use("/enquiries", require("./enquiry.routes"));      // Module 4
 
 module.exports = router;
