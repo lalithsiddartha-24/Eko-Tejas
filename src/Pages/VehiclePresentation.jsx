@@ -249,7 +249,11 @@ function VehiclePresentation() {
       </section>
 
       {/* ---------- 2. In-page navigation (sticks under the navbar) ---------- */}
-      <nav aria-label="Vehicle sections" className="sticky top-[5.25rem] z-30 border-y border-forest-900/8 bg-mint-50/90 backdrop-blur-lg sm:top-[5.5rem]">
+      {/* When the main navbar hides (html has data-nav-hidden), these tabs slide up to the very top. */}
+      <nav
+        aria-label="Vehicle sections"
+        className="sticky top-[5.25rem] z-30 border-y border-forest-900/8 bg-mint-50/90 backdrop-blur-lg transition-[top] duration-300 ease-out motion-reduce:transition-none sm:top-[5.5rem] [[data-nav-hidden]_&]:top-0"
+      >
         <Container className="flex gap-6 overflow-x-auto sm:gap-9">
           {pageSections.map((section) => (
             <a

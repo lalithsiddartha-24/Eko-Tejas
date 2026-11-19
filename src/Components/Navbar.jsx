@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/Group-1941.webp";
 import Button from "./ui/Button";
@@ -30,13 +30,45 @@ function Navbar() {
   const toggleMenu = () => setOpenPath(menuOpen ? null : pathname + hash);
   const closeMenu = () => setOpenPath(null);
 
-  // Add a stronger shadow once the page is scrolled, so the bar "lifts".
+  /*
+   * "Hide on scroll down, show on scroll up" (also called a headroom navbar).
+   * Scrolling DOWN means you're reading, so the bar slides away and the
+   * content (like the hero photo) gets the full screen. Scrolling UP is a
+   * hint you want to go somewhere, so the bar slides back.
+   *
+   * WHY useRef for lastY: we need to remember the previous scroll position
+   * between scroll events, but changing it shouldn't re-render the navbar.
+   * A ref is a box that keeps a value without causing a render.
+   * WHY the 8px threshold: tiny trackpad wobbles shouldn't make it flicker.
+   */
+  const [hiddenOnScroll, setHiddenOnScroll] = useState(false);
+  const lastY = useRef(0);
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 12);
+      const delta = y - lastY.current;
+      if (Math.abs(delta) < 8) return;
+      // Always show it near the top of the page.
+      setHiddenOnScroll(delta > 0 && y > 120);
+      lastY.current = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Never hide the bar while its mobile menu is open.
+  const navHidden = hiddenOnScroll && !menuOpen;
+
+  // Tell the rest of the page (via <html data-nav-hidden>) so other sticky
+  // bars, like the vehicle page's section tabs, can move up into the gap.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (navHidden) root.dataset.navHidden = "";
+    else delete root.dataset.navHidden;
+  }, [navHidden]);
 
   // NavLink only compares the PATH and ignores the "#hash" part, so on
   // "/#service" it thinks Home ("/") is active too. We decide ourselves:
@@ -50,7 +82,15 @@ function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 px-3 pt-3 sm:px-5">
+    <header
+      // onFocus: if someone tabs into the navbar with the keyboard while it's
+      // hidden, slide it back in so they can see what they're focusing.
+      onFocus={() => setHiddenOnScroll(false)}
+      className={`sticky top-0 z-50 px-3 pt-3 transition-transform duration-300 ease-out motion-reduce:transition-none sm:px-5 ${
+        // 130% of its own height: far enough that the shadow is off-screen too.
+        navHidden ? "-translate-y-[130%]" : "translate-y-0"
+      }`}
+    >
       <nav
         aria-label="Main"
         className={`relative mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl border bg-white/90 pl-3 pr-2 backdrop-blur-xl transition-shadow duration-300 sm:h-[4.25rem] sm:pl-4 ${
