@@ -62,7 +62,8 @@ function VehicleListing({ category, eyebrow, title, accent, description, detailP
             {eyebrow}
           </p>
           <h1 className="mt-4 max-w-3xl text-balance font-display text-[2.6rem] font-semibold leading-[1] tracking-[-0.05em] text-forest-950 sm:text-6xl lg:text-7xl">
-            {title} <span className="text-muted/70">{accent}</span>
+            {/* `highlight-sweep` (in index.css) draws a mint marker stroke behind the words when the page opens. */}
+            {title} <span className="highlight-sweep">{accent}</span>
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">{description}</p>
         </Container>
