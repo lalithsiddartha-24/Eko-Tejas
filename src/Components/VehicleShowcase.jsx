@@ -2,6 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Battery, Bike, ChevronLeft, ChevronRight, Clock3, Gauge, Truck, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { normalizedKey } from "../utils/vehicleFormat";
+import CountUp from "./ui/CountUp";
 import VehicleImage from "./ui/VehicleImage";
 
 const commonSwatches = {
@@ -264,7 +265,10 @@ export function VehicleKeySpecs({ items }) {
               <Icon size={14} className="text-forest-600" aria-hidden="true" />
               {item.label}
             </dt>
-            <dd className="mt-2 font-display text-2xl font-semibold tracking-tight text-forest-950 sm:text-4xl">{item.value}</dd>
+            <dd className="mt-2 font-display text-2xl font-semibold tracking-tight text-forest-950 sm:text-4xl">
+              {/* Rolls up like an odometer ("0 km" → "120 km") when the band scrolls into view. */}
+              <CountUp value={item.value} duration={1.8} />
+            </dd>
           </div>
         );
       })}

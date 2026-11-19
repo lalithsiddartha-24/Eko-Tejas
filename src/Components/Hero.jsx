@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import heroImage from "../assets/hero-family-scooter.webp";
 import Button from "./ui/Button";
+import CountUp from "./ui/CountUp";
 
 // The words that flip in "It's ___." Order matters: the first one shows on page load.
 const attributes = ["available", "reliable", "affordable", "silent", "clean"];
@@ -92,7 +93,9 @@ function Hero() {
               // In a <dl> the label (dt) must come first; flex-col-reverse shows the number on top.
               <div key={label} className="flex flex-col-reverse">
                 <dt className="mt-0.5 text-xs text-muted">{label}</dt>
-                <dd className="font-display text-xl font-semibold tracking-tight text-forest-950 sm:text-2xl">{value}</dd>
+                <dd className="font-display text-xl font-semibold tracking-tight text-forest-950 sm:text-2xl">
+                  <CountUp value={value} duration={2} />
+                </dd>
               </div>
             ))}
           </motion.dl>

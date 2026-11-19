@@ -1,5 +1,6 @@
 import { IndianRupee, MapPin, Settings, Wrench } from "lucide-react";
 import Container from "./ui/Container";
+import CountUp from "./ui/CountUp";
 import Reveal from "./ui/Reveal";
 
 const features = [
@@ -23,7 +24,10 @@ function FeatureStrip() {
             <div key={title} className="flex items-start gap-4 py-7 sm:px-2 xl:px-8 xl:first:pl-0 xl:last:pr-0">
               <Icon size={20} strokeWidth={1.6} className="mt-0.5 shrink-0 text-forest-600" aria-hidden="true" />
               <div>
-                <h3 className="font-display font-semibold text-forest-950">{title}</h3>
+                {/* CountUp animates titles that start with a number ("941 spare parts") and leaves the rest alone. */}
+                <h3 className="font-display font-semibold text-forest-950">
+                  <CountUp value={title} />
+                </h3>
                 <p className="mt-1 text-sm leading-6 text-muted">{description}</p>
               </div>
             </div>
