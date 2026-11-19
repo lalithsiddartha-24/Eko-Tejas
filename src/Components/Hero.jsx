@@ -1,7 +1,11 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import heroImage from "../assets/hero-family-scooter.webp";
 import Button from "./ui/Button";
+
+// The words that flip in "It's ___." Order matters: the first one shows on page load.
+const attributes = ["available", "reliable", "affordable", "silent", "clean"];
 
 const stats = [
   { value: "10,000+", label: "Happy riders" },
@@ -56,15 +60,21 @@ function Hero() {
 
           <motion.h1
             {...enter(0.08)}
-            className="mt-5 font-display text-[2.9rem] font-semibold leading-[0.98] tracking-[-0.055em] text-forest-950 sm:text-6xl lg:text-[clamp(3rem,4.6vw,5.25rem)]"
+            className="mt-5 font-display text-[2.5rem] font-semibold leading-[1.02] tracking-[-0.055em] text-forest-950 sm:text-6xl lg:text-[clamp(2.75rem,4.1vw,4.75rem)]"
           >
-            A brighter way
-            <span className="block text-muted/70">to move.</span>
+            {/* Screen readers get the whole sentence once, instead of hearing a word change every 2 seconds. */}
+            <span className="sr-only">Electric is the future, and it&apos;s {attributes.join(", ")}.</span>
+            <span aria-hidden="true">
+              Electric is the future.
+              <span className="mt-1 block text-muted/70">
+                It&apos;s <FlipWord words={attributes} />
+              </span>
+            </span>
           </motion.h1>
 
           <motion.p {...enter(0.16)} className="mt-6 max-w-sm text-base leading-7 text-muted sm:text-lg sm:leading-8">
-            Electric scooters and three-wheelers made for Indian families and businesses.
-            Quiet, clean and simple to own.
+            Electric scooters and three-wheelers made for Indian families and businesses,
+            with service close to home.
           </motion.p>
 
           <motion.div {...enter(0.24)} className="mt-8 flex flex-wrap items-center gap-3">
@@ -103,6 +113,54 @@ function Hero() {
         className="relative -z-10 mt-4 aspect-[4/3] w-full object-cover object-right sm:aspect-[16/10] lg:absolute lg:inset-0 lg:mt-0 lg:aspect-auto lg:h-full lg:object-cover lg:object-right"
       />
     </section>
+  );
+}
+
+/**
+ * A word that flips like a split-flap departure board every 2.4 seconds.
+ *
+ * HOW the flip works:
+ *   - `AnimatePresence` lets the OLD word play an exit animation before
+ *     React removes it. Changing the `key` tells React "this is a new word".
+ *   - The new word starts rotated 90° on the X axis (lying flat, edge-on,
+ *     so it's invisible) and rotates to 0° (facing you). The old word
+ *     rotates the other way to -90°. `perspective` on the parent gives the
+ *     rotation real 3D depth instead of looking like a squash.
+ *   - Both words sit in the SAME grid cell (`col-start-1 row-start-1`), so
+ *     they overlap during the flip instead of pushing each other around.
+ * Reduce motion: the words just cross-fade, with no rotation.
+ */
+function FlipWord({ words }) {
+  const reduceMotion = useReducedMotion();
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setIndex((i) => (i + 1) % words.length), 2400);
+    return () => window.clearInterval(timer);
+  }, [words.length]);
+
+  const flip = reduceMotion
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
+    : {
+        initial: { rotateX: 90, opacity: 0 },
+        animate: { rotateX: 0, opacity: 1 },
+        exit: { rotateX: -90, opacity: 0 },
+      };
+
+  return (
+    <span className="inline-grid align-bottom [perspective:700px]">
+      <AnimatePresence initial={false}>
+        <motion.span
+          key={words[index]}
+          {...flip}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          // The mint "marker" background flips together with the word, like a card.
+          className="col-start-1 row-start-1 justify-self-start whitespace-nowrap rounded-xl bg-volt px-2 text-forest-950 [backface-visibility:hidden] [transform-origin:50%_50%_-0.4em]"
+        >
+          {words[index]}.
+        </motion.span>
+      </AnimatePresence>
+    </span>
   );
 }
 
