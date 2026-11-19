@@ -13,9 +13,10 @@ const stats = [
  * Full-bleed photo hero.
  *
  * HOW the layout works:
- *   - Desktop (lg and up): the section takes the SAME shape as the photo
- *     (`aspect-[1672/941]`), so the photo always fits exactly and the
- *     scooter and family are never cropped. The photo's left ~38% is empty
+ *   - Desktop (lg and up): the section is the SAME shape as the photo
+ *     (height = 56.28% of the width, i.e. 941 ÷ 1672, never less than 600px), so the
+ *     whole photo fits and nobody's head or the scooter gets cut off.
+ *     The photo's left ~38% is empty
  *     white, so the text column is limited to about a third of the width
  *     (`lg:max-w-[33vw]`) and can never run into the scooter.
  *   - Phones/tablets: there isn't room for text beside the people, so the
@@ -38,10 +39,12 @@ function Hero() {
   return (
     <section
       id="home"
-      // Negative margin + padding: the hero slides up behind the floating navbar.
-      className="relative isolate -mt-19 overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#ffffff_55%,#eef6f1_100%)] pt-19 sm:-mt-20 sm:pt-20 lg:flex lg:h-[clamp(600px,56.25vw,1080px)] lg:items-center lg:pt-0"
+      // The hero starts BELOW the navbar (no negative margin), so the bar
+      // never covers the photo. The photo's top edge is pure white, like the
+      // page, so there is no visible line where the navbar area ends.
+      className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#ffffff_55%,#eef6f1_100%)] lg:flex lg:h-[max(600px,56.28vw)] lg:items-center"
     >
-      <div className="relative z-10 px-5 pt-10 sm:px-8 sm:pt-14 lg:px-[5vw] lg:pt-20">
+      <div className="relative z-10 px-5 pt-8 sm:px-8 sm:pt-12 lg:px-[5vw] lg:pt-0">
         <div className="max-w-xl lg:max-w-[33vw] xl:max-w-[30rem]">
           <motion.p
             {...enter(0)}
