@@ -33,10 +33,9 @@ function Vehiclecards() {
           <Reveal>
             <Link
               to="/twowheelers"
-              className="group relative flex h-full min-h-[26rem] flex-col overflow-hidden rounded-[2rem] border border-forest-900/8 bg-white p-7 shadow-soft transition duration-500 hover:-translate-y-1 hover:shadow-lift sm:p-9 motion-reduce:hover:translate-y-0"
+              className="group relative flex h-full min-h-[26rem] flex-col overflow-hidden rounded-[2rem] bg-mint-50 p-7 transition duration-500 hover:-translate-y-1 hover:bg-mint-100 sm:p-9 motion-reduce:hover:translate-y-0"
             >
-              <div aria-hidden="true" className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-[radial-gradient(circle,var(--color-volt-soft),transparent_70%)] opacity-70" />
-              <CardText
+                            <CardText
                 label="2-Wheelers"
                 title="Electric two-wheelers"
                 text="Smart, efficient and powerful scooters designed for everyday journeys."
@@ -50,21 +49,19 @@ function Vehiclecards() {
             </Link>
           </Reveal>
 
-          {/* Three-wheelers: dark card with a line drawing */}
+          {/* Three-wheelers: same soft card, with a line drawing */}
           <Reveal delay={0.08}>
             <Link
               to="/vehicles"
-              className="group relative flex h-full min-h-[26rem] flex-col overflow-hidden rounded-[2rem] bg-forest-900 p-7 text-white shadow-soft transition duration-500 hover:-translate-y-1 hover:shadow-lift sm:p-9 motion-reduce:hover:translate-y-0"
+              className="group relative flex h-full min-h-[26rem] flex-col overflow-hidden rounded-[2rem] bg-mint-50 p-7 transition duration-500 hover:-translate-y-1 hover:bg-mint-100 sm:p-9 motion-reduce:hover:translate-y-0"
             >
-              <div aria-hidden="true" className="bg-grid-dark absolute inset-0" />
               <CardText
-                dark
                 label="3-Wheelers"
                 title="Electric three-wheelers"
                 text="Reliable, cost-efficient vehicles built for businesses and urban mobility."
               />
-              <AutoIllustration className="relative mx-auto mt-auto w-[78%] max-w-sm pt-8 text-sage-300/70 transition-transform duration-700 group-hover:translate-x-2 motion-reduce:transition-none" />
-              <ArrowBadge dark />
+              <AutoIllustration className="relative mx-auto mt-auto w-[78%] max-w-sm pt-8 text-forest-700/40 transition-transform duration-700 group-hover:translate-x-2 motion-reduce:transition-none" />
+              <ArrowBadge />
             </Link>
           </Reveal>
         </div>
@@ -73,27 +70,23 @@ function Vehiclecards() {
   );
 }
 
-function CardText({ label, title, text, dark = false }) {
+function CardText({ label, title, text }) {
   return (
     <div className="relative max-w-sm">
-      <p className={`text-xs font-bold uppercase tracking-[0.22em] ${dark ? "text-volt" : "text-forest-600"}`}>{label}</p>
-      <h3 className={`mt-3 font-display text-3xl font-bold tracking-[-0.03em] sm:text-4xl ${dark ? "text-white" : "text-forest-900"}`}>
-        {title}
-      </h3>
-      <p className={`mt-3 text-[0.95rem] leading-7 ${dark ? "text-white/65" : "text-muted"}`}>{text}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-forest-600">{label}</p>
+      <h3 className="mt-3 font-display text-3xl font-semibold tracking-[-0.035em] text-forest-950 sm:text-4xl">{title}</h3>
+      <p className="mt-3 text-[0.95rem] leading-7 text-muted">{text}</p>
     </div>
   );
 }
 
-function ArrowBadge({ dark = false }) {
+function ArrowBadge() {
   return (
     <span
       aria-hidden="true"
-      className={`absolute right-6 top-6 grid h-12 w-12 place-items-center rounded-full transition-all duration-300 group-hover:rotate-45 sm:right-8 sm:top-8 ${
-        dark ? "bg-volt text-forest-950" : "bg-forest-900 text-white group-hover:bg-volt group-hover:text-forest-950"
-      }`}
+      className="absolute right-6 top-6 grid h-11 w-11 place-items-center rounded-full bg-white text-forest-950 shadow-soft transition-all duration-300 group-hover:rotate-45 group-hover:bg-forest-950 group-hover:text-white sm:right-8 sm:top-8"
     >
-      <ArrowUpRight size={20} />
+      <ArrowUpRight size={19} />
     </span>
   );
 }

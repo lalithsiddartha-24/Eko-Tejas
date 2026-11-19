@@ -27,7 +27,7 @@ function VehicleCard({ vehicle, index, viewTo = "/vehicles" }) {
   ].filter(Boolean);
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-forest-900/8 bg-white p-2.5 shadow-soft transition duration-500 hover:-translate-y-1 hover:shadow-lift has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-forest-600 motion-reduce:hover:translate-y-0">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-forest-900/8 bg-white p-2.5 transition duration-500 hover:-translate-y-1 hover:border-forest-900/15 hover:shadow-lift has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-forest-600 motion-reduce:hover:translate-y-0">
       <div className="relative overflow-hidden rounded-[1.35rem]">
         <VehicleImage
           src={photo}
@@ -43,7 +43,7 @@ function VehicleCard({ vehicle, index, viewTo = "/vehicles" }) {
       </div>
 
       <div className="flex flex-1 flex-col px-3.5 pb-3.5 pt-5 sm:px-4">
-        <h3 className="font-display text-2xl font-bold tracking-[-0.03em] text-forest-900">
+        <h3 className="font-display text-2xl font-semibold tracking-[-0.035em] text-forest-950">
           {/* "Stretched link": the ::after layer covers the whole card, so a click anywhere opens the details. */}
           <Link to={viewTo} state={{ vehicle }} className="outline-none after:absolute after:inset-0 after:content-[''] focus-visible:underline">
             {vehicle.name}
@@ -75,7 +75,7 @@ function VehicleCard({ vehicle, index, viewTo = "/vehicles" }) {
           </Link>
           <span
             aria-hidden="true"
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-forest-900 text-white transition-colors group-hover:bg-volt group-hover:text-forest-950"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-forest-950 text-white transition-colors group-hover:bg-forest-700"
           >
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
           </span>

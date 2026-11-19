@@ -210,7 +210,7 @@ function VehiclePresentation() {
                 <p className="inline-flex rounded-full bg-mint-100 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-forest-600">
                   {formatFieldValue(category || "Electric vehicle")}
                 </p>
-                <h1 className="mt-4 font-display text-4xl font-extrabold tracking-[-0.045em] text-forest-900 sm:text-5xl">
+                <h1 className="mt-4 font-display text-4xl font-semibold tracking-[-0.05em] text-forest-950 sm:text-5xl">
                   {name}
                 </h1>
                 {taglineText && <p className="mt-3 text-base leading-7 text-muted">{taglineText}</p>}
@@ -263,13 +263,12 @@ function VehiclePresentation() {
         </Container>
       </nav>
 
-      {/* ---------- 3. Overview + big numbers (dark band) ---------- */}
-      <section id="overview" className="relative isolate overflow-hidden bg-forest-900 py-16 text-white sm:py-24">
-        <div aria-hidden="true" className="bg-grid-dark absolute inset-0 -z-10" />
+      {/* ---------- 3. Overview + big numbers ---------- */}
+      <section id="overview" className="bg-mint-50 py-16 sm:py-24">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
-            <SectionHeading tone="dark" eyebrow="Overview" title="Made for the way" accent="you move." />
-            <p className="text-lg leading-8 text-white/65">
+            <SectionHeading eyebrow="Overview" title="Made for the way" accent="you move." />
+            <p className="text-lg leading-8 text-muted">
               {taglineText || `Explore the ${name}, its photos, finishes and full technical specifications.`}
             </p>
           </div>
@@ -312,9 +311,9 @@ function VehiclePresentation() {
                 { icon: ShieldCheck, title: "Take it for a ride", text: "Feel the quiet, smooth electric drive." },
               ].map(({ icon: Icon, title, text }, index) => (
                 <li key={title} className="flex gap-4">
-                  <span className="relative grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-forest-900 text-volt">
+                  <span className="relative grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-mint-100 text-forest-700">
                     <Icon size={19} aria-hidden="true" />
-                    <span className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-volt text-[10px] font-bold text-forest-950">
+                    <span className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-forest-950 text-[10px] font-bold text-white">
                       {index + 1}
                     </span>
                   </span>
@@ -327,7 +326,7 @@ function VehiclePresentation() {
             </ol>
           </div>
 
-          <div className="rounded-[2rem] border border-forest-900/8 bg-mint-50 p-6 shadow-soft sm:p-9">
+          <div className="rounded-[2rem] border border-forest-900/8 bg-mint-50 p-6 sm:p-9">
             {vehicle.id ? (
               <TestDriveForm vehicleId={vehicle.id} vehicleName={name} />
             ) : (
@@ -344,21 +343,20 @@ function VehiclePresentation() {
       {/* ---------- 6. Support call to action ---------- */}
       <section id="support" className="py-16 sm:py-20">
         <Container>
-          <div className="relative isolate flex flex-col gap-8 overflow-hidden rounded-[2rem] bg-forest-900 p-8 text-white sm:p-12 md:flex-row md:items-center md:justify-between">
-            <div aria-hidden="true" className="absolute -right-20 -top-20 -z-10 h-72 w-72 rounded-full bg-volt/15 blur-[90px]" />
+          <div className="flex flex-col gap-8 rounded-[2rem] border border-forest-900/8 bg-mint-50 p-8 sm:p-12 md:flex-row md:items-center md:justify-between">
             <div className="flex gap-5">
-              <span className="hidden h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white/10 text-volt sm:grid">
+              <span className="hidden h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white text-forest-600 sm:grid">
                 <Wrench size={24} aria-hidden="true" />
               </span>
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-volt">Service &amp; support</p>
-                <h2 className="mt-2 font-display text-3xl font-bold tracking-tight">Care that comes with every ride.</h2>
-                <p className="mt-2 max-w-md text-white/60">Expert mechanics, genuine spare parts and service plans for every budget.</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-forest-600">Service &amp; support</p>
+                <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-forest-950">Care that comes with every ride.</h2>
+                <p className="mt-2 max-w-md text-muted">Expert mechanics, genuine spare parts and service plans for every budget.</p>
               </div>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button to="/#service" variant="primary">See care plans</Button>
-              <Button to={listPath} variant="ghost">
+              <Button to={listPath} variant="outline">
                 More {listLabel.toLowerCase()} <ArrowRight size={16} />
               </Button>
             </div>

@@ -44,7 +44,7 @@ const services = [
  */
 function Coreservice() {
   return (
-    <section id="core-service" className="py-20 sm:py-28">
+    <section id="core-service" className="bg-white py-20 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="Core services"
@@ -56,16 +56,16 @@ function Coreservice() {
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {services.map(({ icon: Icon, title, description }, index) => (
             <Reveal key={title} delay={(index % 3) * 0.05}>
-              <article className="group relative h-full overflow-hidden rounded-3xl border border-forest-900/8 bg-white p-7 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-forest-600/30 hover:shadow-lift motion-reduce:hover:translate-y-0">
+              <article className="group relative h-full overflow-hidden rounded-3xl border border-forest-900/8 bg-white p-7 transition duration-300 hover:-translate-y-1 hover:border-forest-900/20 hover:bg-mint-50 motion-reduce:hover:translate-y-0">
                 <div className="flex items-start justify-between">
-                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-mint-100 text-forest-700 transition-colors group-hover:bg-forest-900 group-hover:text-volt">
+                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-mint-100 text-forest-700 transition-colors group-hover:bg-forest-950 group-hover:text-white">
                     <Icon size={21} strokeWidth={1.8} aria-hidden="true" />
                   </span>
                   <span aria-hidden="true" className="font-display text-4xl font-extrabold tracking-tighter text-forest-900/[0.07]">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </div>
-                <h3 className="mt-8 font-display text-xl font-bold text-forest-900">{title}</h3>
+                <h3 className="mt-8 font-display text-xl font-semibold text-forest-950">{title}</h3>
                 <p className="mt-2 text-[0.95rem] leading-7 text-muted">{description}</p>
               </article>
             </Reveal>

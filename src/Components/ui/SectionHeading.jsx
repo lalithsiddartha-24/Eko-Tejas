@@ -29,18 +29,18 @@ function SectionHeading({
             dark ? "text-volt" : "text-forest-600"
           }`}
         >
-          <span aria-hidden="true" className={`h-px w-6 ${dark ? "bg-volt/60" : "bg-forest-600/50"}`} />
+          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-signal" />
           {eyebrow}
         </p>
       )}
       <Tag
-        className={`mt-4 text-balance font-display text-[2.15rem] font-bold leading-[1.05] tracking-[-0.035em] sm:text-5xl lg:text-[3.4rem] ${
+        className={`mt-4 text-balance font-display text-[2.1rem] font-semibold leading-[1.05] tracking-[-0.04em] sm:text-5xl lg:text-[3.25rem] ${
           dark ? "text-white" : "text-forest-900"
         }`}
       >
         {title}
         {accent && (
-          <span className={`block ${dark ? "text-sage-300" : "text-forest-600"}`}>{accent}</span>
+          <span className={`block ${dark ? "text-sage-300" : "text-muted/80"}`}>{accent}</span>
         )}
       </Tag>
       {description && (

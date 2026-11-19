@@ -11,15 +11,15 @@ import { Link } from "react-router-dom";
  * "go somewhere" should be a link and "do something" should be a button.
  */
 const variants = {
-  // Bright lime: the main call to action. Use at most once or twice per screen.
-  primary:
-    "bg-volt text-forest-950 hover:bg-volt-soft shadow-[0_10px_30px_-10px_rgb(181_240_122/0.7)]",
-  // Deep green: strong action on light backgrounds.
-  dark: "bg-forest-900 text-white hover:bg-forest-700",
-  // Outline on light backgrounds.
-  outline: "border border-forest-900/15 bg-white text-forest-900 hover:border-forest-900/35",
-  // Outline on dark backgrounds.
-  ghost: "border border-white/20 text-white hover:bg-white/10",
+  // Solid black pill: the main call to action. Minimal sites use one strong
+  // colour for actions, so the eye always knows what to press.
+  primary: "bg-forest-950 text-white hover:bg-forest-700",
+  // Same look, kept as a separate name for places that said "dark" before.
+  dark: "bg-forest-950 text-white hover:bg-forest-700",
+  // Soft mint: a calm secondary action.
+  soft: "bg-volt text-forest-950 hover:bg-volt-soft",
+  // Thin outline: the quietest button.
+  outline: "border border-forest-900/15 bg-white/70 text-forest-900 backdrop-blur hover:border-forest-900/40",
 };
 
 const sizes = {

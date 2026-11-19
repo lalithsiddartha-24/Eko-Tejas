@@ -25,7 +25,7 @@ function Contact() {
   const presetType = state?.enquiryType || "general";
 
   return (
-    <section id="contact" className="bg-white py-20 sm:py-28">
+    <section id="contact" className="bg-mint-50 py-20 sm:py-28">
       <Container className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
         <div>
           <SectionHeading
@@ -38,8 +38,8 @@ function Contact() {
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
             {offices.map((office) => (
               <Reveal key={office.title}>
-                <article className="h-full rounded-3xl border border-forest-900/8 bg-mint-50 p-6">
-                  <h3 className="flex items-center gap-2.5 font-display text-lg font-bold text-forest-900">
+                <article className="h-full rounded-3xl border border-forest-900/8 bg-white p-6">
+                  <h3 className="flex items-center gap-2.5 font-display text-lg font-semibold text-forest-950">
                     <Building2 size={18} className="text-forest-600" aria-hidden="true" />
                     {office.title}
                   </h3>
@@ -68,8 +68,8 @@ function Contact() {
           </div>
         </div>
 
-        <Reveal className="relative self-start rounded-[2rem] border border-forest-900/8 bg-mint-50 p-6 shadow-soft sm:p-9">
-          <h3 className="font-display text-2xl font-bold text-forest-900">Send us a message</h3>
+        <Reveal className="relative self-start rounded-[2rem] border border-forest-900/8 bg-white p-6 shadow-soft sm:p-9">
+          <h3 className="font-display text-2xl font-semibold text-forest-950">Send us a message</h3>
           <p className="mb-7 mt-1.5 text-sm text-muted">Fields marked optional can be left empty.</p>
           {/* `key` makes React start a fresh form when the preset topic changes. */}
           <EnquiryForm key={presetType} defaultType={presetType} />

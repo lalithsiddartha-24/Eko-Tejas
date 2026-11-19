@@ -16,32 +16,38 @@
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
 
-  /* Deep greens: dark sections, headings, primary text on light backgrounds */
-  --color-forest-950: #08201b;
-  --color-forest-900: #0f2e27;
-  --color-forest-800: #173c34;
-  --color-forest-700: #1f4d42;
-  --color-forest-600: #31705f;
+  /*
+   * LIGHT, AIRY THEME (matched to the hero photo: white studio, soft mint,
+   * black details). The "forest" names are kept so components didn't need
+   * renaming, but the darkest shades are now almost black: they are used
+   * for type, buttons and tiny accents, not for big background blocks.
+   */
+  --color-forest-950: #0d100f;
+  --color-forest-900: #161b19;
+  --color-forest-800: #262e2b;
+  --color-forest-700: #3a4842;
+  --color-forest-600: #4f7d68; /* sage green: eyebrows, links, icons */
 
-  /* Soft greens: labels, borders, quiet details */
-  --color-sage-500: #5d8a76;
-  --color-sage-300: #a9c7b7;
+  --color-sage-500: #83a593;
+  --color-sage-300: #bcd5c6;
 
-  /* Light backgrounds */
-  --color-mint-50: #f4f7f3;
-  --color-mint-100: #e9f0eb;
-  --color-mint-200: #d6e3da;
+  /* Backgrounds: white first, mint for gentle contrast between sections */
+  --color-mint-50: #f6faf7;
+  --color-mint-100: #edf5ef;
+  --color-mint-200: #dde9e0;
 
-  /* The one bright accent. Used sparingly: main buttons and highlights. */
-  --color-volt: #b5f07a;
-  --color-volt-soft: #cdf7a3;
+  /* Soft mint accent (from the girl's dress) and one tiny red accent
+     (from the scooter's stripe). Use both sparingly. */
+  --color-volt: #cdebd5;
+  --color-volt-soft: #e3f4e7;
+  --color-signal: #d8392f;
 
   /* Text */
-  --color-ink: #13201c;
-  --color-muted: #56665f;
+  --color-ink: #121614;
+  --color-muted: #646f6a;
 
-  --shadow-soft: 0 1px 2px rgb(15 46 39 / 0.04), 0 12px 32px -12px rgb(15 46 39 / 0.14);
-  --shadow-lift: 0 2px 4px rgb(15 46 39 / 0.05), 0 24px 48px -16px rgb(15 46 39 / 0.22);
+  --shadow-soft: 0 1px 2px rgb(18 22 20 / 0.03), 0 8px 24px -12px rgb(18 22 20 / 0.10);
+  --shadow-lift: 0 2px 4px rgb(18 22 20 / 0.04), 0 18px 40px -18px rgb(18 22 20 / 0.18);
 }
 
 @layer base {
@@ -53,7 +59,7 @@
 
   body {
     margin: 0;
-    background-color: var(--color-mint-50);
+    background-color: #ffffff;
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -78,15 +84,6 @@
   }
 }
 
-/* A faint grid pattern used behind dark hero sections. */
-.bg-grid-dark {
-  background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse at 60% 40%, black 30%, transparent 75%);
-}
-
 /* Moving light streak across the featured care plan card. */
 .premium-plan-card::after {
   position: absolute;
@@ -98,9 +95,9 @@
   background: linear-gradient(
     105deg,
     transparent,
-    rgb(205 247 163 / 4%) 35%,
-    rgb(205 247 163 / 14%) 50%,
-    rgb(205 247 163 / 4%) 65%,
+    rgb(205 235 213 / 4%) 35%,
+    rgb(205 235 213 / 16%) 50%,
+    rgb(205 235 213 / 4%) 65%,
     transparent
   );
   transform: translateX(-120%) skewX(-18deg);

@@ -37,20 +37,18 @@ function VehicleListing({ category, eyebrow, title, accent, description, detailP
 
   return (
     <main>
-      {/* Dark page header that sits behind the floating navbar (like the home hero). */}
-      <header className="relative isolate -mt-19 overflow-hidden bg-forest-900 pb-24 pt-19 text-white sm:-mt-20 sm:pb-28 sm:pt-20">
-        <div aria-hidden="true" className="bg-grid-dark absolute inset-0 -z-10" />
-        <div aria-hidden="true" className="absolute -right-24 -top-24 -z-10 h-[28rem] w-[28rem] rounded-full bg-forest-600/45 blur-[110px]" />
+      {/* Light page header with the same white-to-mint fade as the home hero photo. */}
+      <header className="relative -mt-19 bg-[linear-gradient(180deg,#ffffff_0%,var(--color-mint-100)_100%)] pb-24 pt-19 sm:-mt-20 sm:pb-28 sm:pt-20">
 
         <Container className="pt-14 sm:pt-20">
-          <nav aria-label="Vehicle categories" className="inline-flex rounded-full border border-white/10 bg-white/[0.06] p-1 backdrop-blur">
+          <nav aria-label="Vehicle categories" className="inline-flex rounded-full border border-forest-900/8 bg-white p-1">
             {categoryTabs.map((tab) => (
               <NavLink
                 key={tab.to}
                 to={tab.to}
                 className={({ isActive }) =>
                   `rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                    isActive ? "bg-volt text-forest-950" : "text-white/70 hover:text-white"
+                    isActive ? "bg-forest-950 text-white" : "text-muted hover:text-forest-950"
                   }`
                 }
               >
@@ -59,17 +57,20 @@ function VehicleListing({ category, eyebrow, title, accent, description, detailP
             ))}
           </nav>
 
-          <p className="mt-10 text-xs font-bold uppercase tracking-[0.22em] text-volt">{eyebrow}</p>
-          <h1 className="mt-4 max-w-3xl text-balance font-display text-[2.6rem] font-extrabold leading-[1] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
-            {title} <span className="text-sage-300">{accent}</span>
+          <p className="mt-10 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-muted">
+            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-signal" />
+            {eyebrow}
+          </p>
+          <h1 className="mt-4 max-w-3xl text-balance font-display text-[2.6rem] font-semibold leading-[1] tracking-[-0.05em] text-forest-950 sm:text-6xl lg:text-7xl">
+            {title} <span className="text-muted/70">{accent}</span>
           </h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-white/65 sm:text-lg sm:leading-8">{description}</p>
+          <p className="mt-5 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">{description}</p>
         </Container>
       </header>
 
       <Container className="relative -mt-12 pb-20 sm:pb-28">
         {/* Toolbar: result count + search. Overlaps the header like the home feature strip. */}
-        <div className="flex flex-col gap-3 rounded-2xl border border-forest-900/8 bg-white p-3 shadow-lift sm:flex-row sm:items-center sm:justify-between sm:pl-6">
+        <div className="flex flex-col gap-3 rounded-2xl border border-forest-900/8 bg-white p-3 shadow-soft sm:flex-row sm:items-center sm:justify-between sm:pl-6">
           <p className="px-2 text-sm text-muted sm:px-0" aria-live="polite">
             {loading
               ? "Loading vehicles…"
@@ -136,9 +137,9 @@ function VehicleListing({ category, eyebrow, title, accent, description, detailP
         </div>
 
         {/* Closing call to action */}
-        <div className="mt-16 flex flex-col items-start justify-between gap-6 rounded-[2rem] bg-mint-100 p-8 sm:flex-row sm:items-center sm:p-10">
+        <div className="mt-16 flex flex-col items-start justify-between gap-6 rounded-[2rem] bg-mint-50 p-8 sm:flex-row sm:items-center sm:p-10">
           <div>
-            <h2 className="font-display text-2xl font-bold tracking-tight text-forest-900 sm:text-3xl">Not sure which one fits you?</h2>
+            <h2 className="font-display text-2xl font-semibold tracking-tight text-forest-950 sm:text-3xl">Not sure which one fits you?</h2>
             <p className="mt-2 max-w-lg text-muted">Tell us how you ride or what you carry, and we&apos;ll help you choose.</p>
           </div>
           <Button to="/#contact" variant="dark" size="lg">

@@ -10,24 +10,20 @@ const features = [
 ];
 
 /**
- * A white card that overlaps the bottom of the dark hero.
- * WHY overlap (`-mt-8`): it visually "stitches" the dark hero to the light
- * page below, which feels more crafted than a hard edge between two blocks.
+ * A quiet row of four reasons, separated only by thin lines.
+ * WHY no card or shadow: in a minimal layout, whitespace and hairlines do
+ * the job of boxes. Fewer boxes = calmer page.
  */
 function FeatureStrip() {
   return (
-    <section aria-label="Why Eko Tejas" className="relative z-10 -mt-8">
+    <section aria-label="Why Eko Tejas" className="border-y border-forest-900/8 bg-white">
       <Container>
-        {/* gap-px + an OPAQUE background = 1px divider lines between the cells.
-            (A see-through colour here would let the dark hero show through.) */}
-        <Reveal className="grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-mint-200 bg-mint-200 shadow-lift sm:grid-cols-2 xl:grid-cols-4">
+        <Reveal className="grid grid-cols-1 divide-y divide-forest-900/8 sm:grid-cols-2 sm:divide-y-0 xl:grid-cols-4 xl:divide-x">
           {features.map(({ icon: Icon, title, description }) => (
-            <div key={title} className="group flex items-start gap-4 bg-white p-6 transition-colors hover:bg-mint-50 lg:p-7">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-mint-100 text-forest-700 transition-colors group-hover:bg-forest-900 group-hover:text-volt">
-                <Icon size={21} strokeWidth={1.8} aria-hidden="true" />
-              </span>
+            <div key={title} className="flex items-start gap-4 py-7 sm:px-2 xl:px-8 xl:first:pl-0 xl:last:pr-0">
+              <Icon size={20} strokeWidth={1.6} className="mt-0.5 shrink-0 text-forest-600" aria-hidden="true" />
               <div>
-                <h3 className="font-display text-[1.05rem] font-bold text-forest-900">{title}</h3>
+                <h3 className="font-display font-semibold text-forest-950">{title}</h3>
                 <p className="mt-1 text-sm leading-6 text-muted">{description}</p>
               </div>
             </div>

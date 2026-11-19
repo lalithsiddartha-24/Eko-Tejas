@@ -86,15 +86,14 @@ function Navbar() {
         </ul>
 
         <div className="flex items-center gap-2">
-          <Button
-            to="/#contact"
-            state={{ enquiryType: "dealership" }}
-            variant="dark"
-            className="hidden sm:inline-flex"
-          >
-            Become a dealer
-            <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Button>
+          {/* Wrapped in a div because the Button's own `inline-flex` class
+              would otherwise win over `hidden`, showing it on phones. */}
+          <div className="hidden sm:block">
+            <Button to="/#contact" state={{ enquiryType: "dealership" }} variant="dark">
+              Become a dealer
+              <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Button>
+          </div>
 
           <button
             type="button"

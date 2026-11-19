@@ -247,24 +247,24 @@ export function VehicleSpecifications({ items }) {
   );
 }
 
-/** Big headline numbers (range, power...) for the dark band on the vehicle page. */
+/** Big headline numbers (range, power...) for the overview band on the vehicle page. */
 const desktopColumns = ["", "md:grid-cols-1", "md:grid-cols-2", "md:grid-cols-3", "md:grid-cols-4"];
 
 export function VehicleKeySpecs({ items }) {
   const shown = items.slice(0, 4);
   return (
     // gap-px over a lighter background draws hairline dividers between cells.
-    <dl className={`grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-white/10 ${desktopColumns[shown.length]}`}>
+    <dl className={`grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-mint-200 bg-mint-200 ${desktopColumns[shown.length]}`}>
       {shown.map((item) => {
         const Icon = iconFor(item.label);
         return (
           // An odd last item stretches across both columns on phones (no empty gap).
-          <div key={item.label} className="bg-forest-900 p-5 last:odd:col-span-2 sm:p-7 md:last:odd:col-span-1">
-            <dt className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/55">
-              <Icon size={14} className="text-volt" aria-hidden="true" />
+          <div key={item.label} className="bg-white p-5 last:odd:col-span-2 sm:p-7 md:last:odd:col-span-1">
+            <dt className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
+              <Icon size={14} className="text-forest-600" aria-hidden="true" />
               {item.label}
             </dt>
-            <dd className="mt-2 font-display text-2xl font-extrabold tracking-tight text-white sm:text-4xl">{item.value}</dd>
+            <dd className="mt-2 font-display text-2xl font-semibold tracking-tight text-forest-950 sm:text-4xl">{item.value}</dd>
           </div>
         );
       })}
