@@ -5,6 +5,7 @@ import { useVehicles } from "../hooks/useVehicles";
 import VehicleCard, { VehicleCardSkeleton } from "./Vehiclecard";
 import Button from "./ui/Button";
 import Container from "./ui/Container";
+import FocusInText from "./ui/FocusInText";
 import Reveal from "./ui/Reveal";
 
 const categoryTabs = [
@@ -120,9 +121,12 @@ function VehicleListing({ category, eyebrow, title, accent, description, detailP
                 dark ? "text-white" : "text-forest-950"
               }`}
             >
-              {/* `highlight-sweep` (in index.css) draws a mint marker stroke behind the words when the page opens.
-                  On the dark photo the highlighted word turns black, so it stays readable on the mint. */}
-              {title} <span className={`highlight-sweep ${dark ? "text-forest-950" : ""}`}>{accent}</span>
+              {/* Each header gets the word animation that suits its background:
+                  - light header: `highlight-sweep` (index.css), a mint marker stroke behind the word
+                  - photo header: <FocusInText>, the letters blur into focus one by one,
+                    matching the motion-blur photo behind them */}
+              {title}{" "}
+              {dark ? <FocusInText text={accent} /> : <span className="highlight-sweep">{accent}</span>}
             </h1>
             <p className={`mt-5 max-w-xl text-base leading-7 sm:text-lg sm:leading-8 ${dark ? "text-white/80" : "text-muted"}`}>
               {description}
