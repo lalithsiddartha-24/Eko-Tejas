@@ -23,8 +23,9 @@ const categoryTabs = [
  *   empty   -> a friendly "nothing here" message
  *   success -> the grid of vehicles
  */
-function VehicleListing({ category, eyebrow, title, accent, description, detailPath }) {
+function VehicleListing({ category, eyebrow, title, accent, description, detailPath, image, imageAlt = "" }) {
   const { vehicles, loading, error, retry } = useVehicles(category);
+  const dark = Boolean(image); // a photo header uses white text
   const [query, setQuery] = useState("");
 
   // Simple search: filter in the browser, no extra API call needed.
@@ -37,35 +38,96 @@ function VehicleListing({ category, eyebrow, title, accent, description, detailP
 
   return (
     <main>
-      {/* Light page header with the same white-to-mint fade as the home hero photo. */}
-      <header className="relative -mt-19 bg-[linear-gradient(180deg,#ffffff_0%,var(--color-mint-100)_100%)] pb-24 pt-19 sm:-mt-20 sm:pb-28 sm:pt-20">
+      {/*
+        Page header. Two looks:
+          - no `image`: light white-to-mint fade (2-wheeler page)
+          - with `image`: the photo fills the header as a background, and a
+            black fade sits on top of it. The fade is darkest on the LEFT,
+            behind the text, and clears toward the right so the vehicle
+            stays vivid. That's how text stays readable on a busy photo.
+        `dark` switches the text colours to white for the photo version.
+      */}
+      <header
+        className={`relative isolate -mt-19 overflow-hidden pb-24 pt-19 sm:-mt-20 sm:pb-28 sm:pt-20 ${
+          dark
+            ? "bg-forest-950 lg:flex lg:min-h-[min(640px,80svh)] lg:items-center"
+            : "bg-[linear-gradient(180deg,#ffffff_0%,var(--color-mint-100)_100%)]"
+        }`}
+      >
+        {dark && (
+          <>
+            <img
+              src={image}
+              alt={imageAlt}
+              width={1600}
+              height={904}
+              // It's at the top of the page, so load it straight away.
+              fetchPriority="high"
+              className="absolute inset-0 -z-20 h-full w-full object-cover object-[62%_center]"
+            />
+            {/* Phones: text covers the whole width, so an even, stronger shade. */}
+            <div aria-hidden="true" className="absolute inset-0 -z-10 bg-black/60 lg:hidden" />
+            {/* Desktop: dark on the left behind the words, clear on the right. */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgb(6_8_7/0.88)_0%,rgb(6_8_7/0.7)_35%,rgb(6_8_7/0.2)_65%,rgb(6_8_7/0)_85%)] lg:block"
+            />
+            {/* A little extra shade at the bottom, where the search bar overlaps. */}
+            <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
+          </>
+        )}
 
-        <Container className="pt-14 sm:pt-20">
-          <nav aria-label="Vehicle categories" className="inline-flex rounded-full border border-forest-900/8 bg-white p-1">
-            {categoryTabs.map((tab) => (
-              <NavLink
-                key={tab.to}
-                to={tab.to}
-                className={({ isActive }) =>
-                  `rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                    isActive ? "bg-forest-950 text-white" : "text-muted hover:text-forest-950"
-                  }`
-                }
-              >
-                {tab.label}
-              </NavLink>
-            ))}
-          </nav>
+        <Container className="pt-14 sm:pt-20 lg:pt-8">
+          <div className={dark ? "max-w-xl" : ""}>
+            <nav
+              aria-label="Vehicle categories"
+              className={`inline-flex rounded-full border p-1 ${
+                dark ? "border-white/15 bg-white/10 backdrop-blur" : "border-forest-900/8 bg-white"
+              }`}
+            >
+              {categoryTabs.map((tab) => (
+                <NavLink
+                  key={tab.to}
+                  to={tab.to}
+                  className={({ isActive }) =>
+                    `rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                      isActive
+                        ? dark
+                          ? "bg-white text-forest-950"
+                          : "bg-forest-950 text-white"
+                        : dark
+                          ? "text-white/75 hover:text-white"
+                          : "text-muted hover:text-forest-950"
+                    }`
+                  }
+                >
+                  {tab.label}
+                </NavLink>
+              ))}
+            </nav>
 
-          <p className="mt-10 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-muted">
-            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-signal" />
-            {eyebrow}
-          </p>
-          <h1 className="mt-4 max-w-3xl text-balance font-display text-[2.6rem] font-semibold leading-[1] tracking-[-0.05em] text-forest-950 sm:text-6xl lg:text-7xl">
-            {/* `highlight-sweep` (in index.css) draws a mint marker stroke behind the words when the page opens. */}
-            {title} <span className="highlight-sweep">{accent}</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">{description}</p>
+            {/* `flex w-fit` (not inline-flex) keeps the label on its own line under the tabs. */}
+            <p
+              className={`mt-10 flex w-fit items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] ${
+                dark ? "text-white/75" : "text-muted"
+              }`}
+            >
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-signal" />
+              {eyebrow}
+            </p>
+            <h1
+              className={`mt-4 max-w-3xl text-balance font-display text-[2.6rem] font-semibold leading-[1] tracking-[-0.05em] sm:text-6xl lg:text-7xl ${
+                dark ? "text-white" : "text-forest-950"
+              }`}
+            >
+              {/* `highlight-sweep` (in index.css) draws a mint marker stroke behind the words when the page opens.
+                  On the dark photo the highlighted word turns black, so it stays readable on the mint. */}
+              {title} <span className={`highlight-sweep ${dark ? "text-forest-950" : ""}`}>{accent}</span>
+            </h1>
+            <p className={`mt-5 max-w-xl text-base leading-7 sm:text-lg sm:leading-8 ${dark ? "text-white/80" : "text-muted"}`}>
+              {description}
+            </p>
+          </div>
         </Container>
       </header>
 

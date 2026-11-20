@@ -1,7 +1,9 @@
+import bananaMarketImage from "../assets/three-wheeler-banana-market.webp";
 import VehicleListing from "../Components/VehicleListing";
 
 /*
- * Same layout as the two-wheeler page; only the text and category differ.
+ * Same layout as the two-wheeler page; only the text, category and the
+ * header photo (the black-and-white market shot with the green trolley) differ.
  * Data comes from GET /api/vehicles?category=three-wheeler.
  */
 function Threewheeler() {
@@ -13,6 +15,8 @@ function Threewheeler() {
       accent="business."
       description="Reliable three-wheelers for passenger mobility, commercial transport and everyday business needs."
       detailPath={(vehicle) => `/vehicle-presentation/three-wheeler/${encodeURIComponent(vehicle.name)}`}
+      image={bananaMarketImage}
+      imageAlt="A smiling driver speeds an electric cargo three-wheeler loaded with bananas past a market"
     />
   );
 }
