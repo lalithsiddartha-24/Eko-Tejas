@@ -24,7 +24,32 @@ const categoryTabs = [
  *   empty   -> a friendly "nothing here" message
  *   success -> the grid of vehicles
  */
-function VehicleListing({ category, eyebrow, title, accent, description, detailPath, image, imageAlt = "" }) {
+/*
+ * Where the header photo sits on desktop:
+ *   - "full":  fills the whole header (the 3-wheeler photo; the vehicle
+ *              spans most of the picture anyway)
+ *   - "right": fills only the right 60%, with its left edge faded out by a
+ *              mask. For photos whose subject is in the CENTRE (the green
+ *              scooter): it moves the subject out from behind the title.
+ * On phones the photo always fills the header.
+ */
+const imagePlacements = {
+  full: "lg:inset-0",
+  right:
+    "lg:inset-y-0 lg:left-auto lg:right-0 lg:w-[60%] lg:[mask-image:linear-gradient(90deg,transparent,black_35%)]",
+};
+
+function VehicleListing({
+  category,
+  eyebrow,
+  title,
+  accent,
+  description,
+  detailPath,
+  image,
+  imageAlt = "",
+  imagePlacement = "full",
+}) {
   const { vehicles, loading, error, retry } = useVehicles(category);
   const dark = Boolean(image); // a photo header uses white text
   const [query, setQuery] = useState("");
@@ -60,11 +85,9 @@ function VehicleListing({ category, eyebrow, title, accent, description, detailP
             <img
               src={image}
               alt={imageAlt}
-              width={1600}
-              height={904}
               // It's at the top of the page, so load it straight away.
               fetchPriority="high"
-              className="absolute inset-0 -z-20 h-full w-full object-cover object-[62%_center]"
+              className={`absolute inset-0 -z-20 h-full w-full object-cover ${imagePlacement === "full" ? "object-[62%_center]" : "object-center"} ${imagePlacements[imagePlacement]}`}
             />
             {/* Phones: text covers the whole width, so an even, stronger shade. */}
             <div aria-hidden="true" className="absolute inset-0 -z-10 bg-black/60 lg:hidden" />
