@@ -6,11 +6,11 @@ import Button from "./ui/Button";
 import FormField from "./ui/FormField";
 
 const enquiryTypes = [
-  { value: "general", label: "General question" },
+  { value: "general", label: "General" },
   { value: "pricing", label: "Pricing" },
   { value: "finance", label: "Finance / EMI" },
   { value: "dealership", label: "Become a dealer" },
-  { value: "service", label: "Service & care" },
+  { value: "service", label: "Service" },
 ];
 
 const emptyForm = {
@@ -93,15 +93,45 @@ function EnquiryForm({ defaultType = "general" }) {
   return (
     // noValidate: we show our own friendly messages instead of the browser's popups.
     <form onSubmit={handleSubmit} noValidate className="grid gap-5 sm:grid-cols-2">
+      {/*
+        Topic as tappable "chips" instead of a dropdown: all choices are
+        visible at once and one tap picks one. They're still real radio
+        buttons (hidden with `sr-only`), so keyboard arrows and screen
+        readers work exactly like a normal radio group.
+      */}
+      <fieldset className="sm:col-span-2">
+        <legend className="mb-2.5 text-sm font-semibold text-forest-900">What can we help with?</legend>
+        <div className="flex flex-wrap gap-2">
+          {enquiryTypes.map((type) => {
+            const checked = values.enquiry_type === type.value;
+            return (
+              <label
+                key={type.value}
+                className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-colors has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-forest-600/20 ${
+                  checked
+                    ? "border-forest-950 bg-forest-950 text-white"
+                    : "border-forest-900/12 bg-white text-forest-800 hover:border-forest-900/30"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="enquiry_type"
+                  value={type.value}
+                  checked={checked}
+                  onChange={update}
+                  className="sr-only"
+                />
+                {type.label}
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
+
       <FormField label="Your name" name="customer_name" autoComplete="name" value={values.customer_name} onChange={update} error={errors.customer_name} required />
       <FormField label="Mobile number" name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="98765 43210" value={values.phone} onChange={update} error={errors.phone} required />
       <FormField label="Email" optional name="email" type="email" autoComplete="email" value={values.email} onChange={update} error={errors.email} />
       <FormField label="City" optional name="city" autoComplete="address-level2" value={values.city} onChange={update} error={errors.city} />
-      <FormField as="select" label="What is it about?" name="enquiry_type" value={values.enquiry_type} onChange={update} error={errors.enquiry_type} className="sm:col-span-2">
-        {enquiryTypes.map((type) => (
-          <option key={type.value} value={type.value}>{type.label}</option>
-        ))}
-      </FormField>
       <FormField as="textarea" label="Message" name="message" rows={4} maxLength={1000} placeholder="Tell us what you're looking for…" value={values.message} onChange={update} error={errors.message} className="sm:col-span-2" required />
 
       {/*
