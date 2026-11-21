@@ -42,6 +42,10 @@
   --color-volt-soft: #e3f4e7;
   --color-signal: #d8392f;
 
+  /* Emerald sampled from the green scooter and trolley in the header
+     photos. Bright enough to read on the dark photo headers (~8.6:1). */
+  --color-ev-green: #34c17a;
+
   /* Text */
   --color-ink: #121614;
   --color-muted: #646f6a;
@@ -81,44 +85,6 @@
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-}
-
-/*
- * HIGHLIGHTER SWEEP: a mint "marker pen" stroke that grows behind text.
- *
- * HOW it works: the background is a solid-colour gradient (a gradient is
- * the only way to give a background-image a plain colour). We start its
- * width at 0% and animate it to 100%, so it looks like it's being drawn
- * from left to right.
- * WHY box-decoration-break: clone: if the words wrap onto two lines on a
- * phone, each line gets its own complete highlight instead of one broken box.
- * The page change re-creates the heading, so it plays again each time you
- * open the 2-wheeler or 3-wheeler page.
- */
-.highlight-sweep {
-  padding: 0 0.1em;
-  margin: 0 -0.05em;
-  background-image: linear-gradient(var(--color-volt), var(--color-volt));
-  background-repeat: no-repeat;
-  background-position: 0 85%;
-  background-size: 0% 88%;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  animation: highlight-sweep 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
-}
-
-@keyframes highlight-sweep {
-  to {
-    background-size: 100% 88%;
-  }
-}
-
-/* Reduce motion: show the finished highlight straight away, no animation. */
-@media (prefers-reduced-motion: reduce) {
-  .highlight-sweep {
-    animation: none;
-    background-size: 100% 88%;
   }
 }
 

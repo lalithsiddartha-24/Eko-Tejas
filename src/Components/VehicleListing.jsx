@@ -5,7 +5,7 @@ import { useVehicles } from "../hooks/useVehicles";
 import VehicleCard, { VehicleCardSkeleton } from "./Vehiclecard";
 import Button from "./ui/Button";
 import Container from "./ui/Container";
-import FocusInText from "./ui/FocusInText";
+import LineReveal from "./ui/LineReveal";
 import Reveal from "./ui/Reveal";
 
 const categoryTabs = [
@@ -144,12 +144,16 @@ function VehicleListing({
                 dark ? "text-white" : "text-forest-950"
               }`}
             >
-              {/* Each header gets the word animation that suits its background:
-                  - light header: `highlight-sweep` (index.css), a mint marker stroke behind the word
-                  - photo header: <FocusInText>, the letters blur into focus one by one,
-                    matching the motion-blur photo behind them */}
-              {title}{" "}
-              {dark ? <FocusInText text={accent} /> : <span className="highlight-sweep">{accent}</span>}
+              {/* The two lines slide up one after the other (see LineReveal).
+                  On the photo headers the second line is emerald green, the same green
+                  as the scooter / trolley in the black-and-white photo, so the eye
+                  links the word to the vehicle. */}
+              <LineReveal
+                lines={[
+                  { text: title },
+                  { text: accent, className: dark ? "text-ev-green" : "text-muted/70" },
+                ]}
+              />
             </h1>
             <p className={`mt-5 max-w-xl text-base leading-7 sm:text-lg sm:leading-8 ${dark ? "text-white/80" : "text-muted"}`}>
               {description}
