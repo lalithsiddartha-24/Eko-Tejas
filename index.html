@@ -2,9 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ekotejas-redesign</title>
+
+    <!--
+      The default title and description. Each page replaces the title with
+      its own (see the <title> tags inside the React pages), but these are
+      what search engines and link previews fall back to.
+    -->
+    <title>Eko Tejas | Electric Scooters &amp; Three-Wheelers</title>
+    <meta
+      name="description"
+      content="Eko Tejas is India's homegrown electric vehicle brand. Explore electric scooters and cargo and passenger three-wheelers, book a test drive, and get service close to home."
+    />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Browser tab icon and home-screen icon (the Eko Tejas shield). -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!--
+      Link previews (WhatsApp, Facebook, LinkedIn, X...). These apps don't
+      run JavaScript, so the preview must be written here in plain HTML.
+      og:image must be a full URL, so it points at the live site.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Eko Tejas" />
+    <meta property="og:title" content="Eko Tejas | Electric Scooters & Three-Wheelers" />
+    <meta
+      property="og:description"
+      content="India's homegrown EV brand. Electric scooters and three-wheelers for families and businesses."
+    />
+    <meta property="og:url" content="https://eko-tejas.vercel.app/" />
+    <meta property="og:image" content="https://eko-tejas.vercel.app/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A father and daughter with a white Eko Tejas electric scooter" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

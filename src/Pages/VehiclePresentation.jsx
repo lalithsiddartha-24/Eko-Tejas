@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, CalendarCheck, ChevronRight, MessageCircle, PhoneCall, ShieldCheck, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import PageMeta from "../Components/PageMeta";
 import TestDriveForm from "../Components/TestDriveForm";
 import {
   VehicleColorSelector,
@@ -138,6 +139,7 @@ function VehiclePresentation() {
   if (error) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center px-5 py-20">
+        <PageMeta title="Vehicle not found" />
         <div role="alert" className="flex max-w-md flex-col items-center rounded-[2rem] border border-forest-900/8 bg-white px-8 py-14 text-center shadow-soft">
           <h1 className="font-display text-2xl font-bold text-forest-900">We couldn&apos;t find that vehicle</h1>
           <p className="mt-2 text-muted">{error}</p>
@@ -179,6 +181,7 @@ function VehiclePresentation() {
 
   return (
     <main>
+      <PageMeta title={`${name}${isThreeWheeler ? " electric three-wheeler" : " electric scooter"}`} />
       {/* ---------- 1. Product hero: gallery + buy box ---------- */}
       <section className="pb-12 pt-6 sm:pt-10">
         <Container>

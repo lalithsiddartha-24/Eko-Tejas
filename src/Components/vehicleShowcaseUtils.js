@@ -1,5 +1,5 @@
-import axelRearImage from "../assets/vehicle-gallery/axel-rear.png";
-import axelSideImage from "../assets/vehicle-gallery/axel-side.png";
+import axelRearImage from "../assets/vehicle-gallery/axel-rear.webp";
+import axelSideImage from "../assets/vehicle-gallery/axel-side.webp";
 
 const IMAGE_FIELDS = [
   "images",

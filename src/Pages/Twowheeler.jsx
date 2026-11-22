@@ -10,6 +10,7 @@ function Twowheeler() {
   return (
     <VehicleListing
       category="two-wheeler"
+      pageTitle="Electric scooters"
       eyebrow="Electric 2-wheelers"
       title="Ride smart."
       accent="Ride electric."

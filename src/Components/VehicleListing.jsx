@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useVehicles } from "../hooks/useVehicles";
 import VehicleCard, { VehicleCardSkeleton } from "./Vehiclecard";
 import Button from "./ui/Button";
+import PageMeta from "./PageMeta";
 import Container from "./ui/Container";
 import LineReveal from "./ui/LineReveal";
 import Reveal from "./ui/Reveal";
@@ -49,6 +50,7 @@ function VehicleListing({
   image,
   imageAlt = "",
   imagePlacement = "full",
+  pageTitle,
 }) {
   const { vehicles, loading, error, retry } = useVehicles(category);
   const dark = Boolean(image); // a photo header uses white text
@@ -64,6 +66,7 @@ function VehicleListing({
 
   return (
     <main>
+      <PageMeta title={pageTitle} />
       {/*
         Page header. Two looks:
           - no `image`: light white-to-mint fade (2-wheeler page)

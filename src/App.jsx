@@ -1,20 +1,37 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
 import Contact from "./Components/Contact";
 import Coreservice from "./Components/Coreservice";
 import Features from "./Components/Features";
 import Footer from "./Components/Footer";
 import Hero from "./Components/Hero";
 import Navbar from "./Components/Navbar";
+import PageMeta from "./Components/PageMeta";
 import ScrollManager from "./Components/ScrollManager";
 import Service from "./Components/Service";
 import Vehiclecards from "./Components/Vehiclecards";
-import Threewheeler from "./Pages/Threewheeler";
-import Twowheeler from "./Pages/Twowheeler";
-import VehiclePresentation from "./Pages/VehiclePresentation";
+
+/*
+ * CODE SPLITTING: load each page's code only when someone visits it.
+ *
+ * Before, the browser downloaded the code for EVERY page on the first
+ * visit, even if the person only looked at the home page. `lazy()` puts
+ * each of these pages into its own small file that is fetched the first
+ * time that page is opened. The home page is imported normally, because
+ * almost everyone lands there first, so it should be ready instantly.
+ *
+ * <Suspense> shows its `fallback` for the split second while a page's file
+ * is downloading.
+ */
+const Twowheeler = lazy(() => import("./Pages/Twowheeler"));
+const Threewheeler = lazy(() => import("./Pages/Threewheeler"));
+const VehiclePresentation = lazy(() => import("./Pages/VehiclePresentation"));
+const NotFound = lazy(() => import("./Pages/NotFound"));
 
 function HomePage() {
   return (
     <main>
+      <PageMeta />
       <Hero />
       <Features />
       <Vehiclecards />
@@ -22,6 +39,16 @@ function HomePage() {
       <Coreservice />
       <Contact />
     </main>
+  );
+}
+
+/** A quiet placeholder while a page's code loads (usually a blink). */
+function PageLoading() {
+  return (
+    <div role="status" className="flex min-h-[60vh] items-center justify-center">
+      <span className="h-1.5 w-24 animate-pulse rounded-full bg-mint-200" />
+      <span className="sr-only">Loading page…</span>
+    </div>
   );
 }
 
@@ -34,15 +61,18 @@ function App() {
       <Navbar />
 
       <div className="flex-1">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/twowheelers" element={<Twowheeler />} />
-          <Route path="/vehicles" element={<Threewheeler />} />
-          <Route path="/vehicle-presentation/:vehicleCategory/:vehicleName" element={<VehiclePresentation />} />
-          <Route path="/vehicle-presentation/:vehicleName" element={<VehiclePresentation />} />
-          <Route path="/vehicle-presentation" element={<VehiclePresentation />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <Suspense fallback={<PageLoading />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/twowheelers" element={<Twowheeler />} />
+            <Route path="/vehicles" element={<Threewheeler />} />
+            <Route path="/vehicle-presentation/:vehicleCategory/:vehicleName" element={<VehiclePresentation />} />
+            <Route path="/vehicle-presentation/:vehicleName" element={<VehiclePresentation />} />
+            <Route path="/vehicle-presentation" element={<VehiclePresentation />} />
+            {/* Any other address: a friendly "page not found" instead of a silent redirect. */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </div>
 
       <Footer />

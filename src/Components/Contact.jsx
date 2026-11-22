@@ -4,7 +4,6 @@ import EnquiryForm from "./EnquiryForm";
 import Container from "./ui/Container";
 import Reveal from "./ui/Reveal";
 import SectionHeading from "./ui/SectionHeading";
-import { ScooterIllustration } from "./ui/VehicleIllustrations";
 
 const offices = [
   {
@@ -54,9 +53,8 @@ function Contact() {
           {/* overflow-clip (not -hidden): it trims the decorations the same way, but the
               panel can never be scrolled by code, so its content can't shift. */}
           <aside className="relative isolate flex flex-col overflow-clip bg-forest-950 p-7 text-white sm:p-10">
-            {/* Soft green glow + a faint line-drawn scooter: quiet decoration, hidden from screen readers. */}
+            {/* Just a soft green glow in the corner: quiet decoration, hidden from screen readers. */}
             <div aria-hidden="true" className="absolute -bottom-24 -right-24 -z-10 h-72 w-72 rounded-full bg-ev-green/20 blur-[90px]" />
-            <ScooterIllustration className="pointer-events-none absolute -bottom-6 -right-10 -z-10 w-72 text-white/[0.06]" />
 
             <h3 className="font-display text-2xl font-semibold tracking-tight">Talk to us</h3>
             <p className="mt-2 max-w-xs text-sm leading-6 text-white/60">

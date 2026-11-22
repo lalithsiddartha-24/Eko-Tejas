@@ -10,6 +10,7 @@ function Threewheeler() {
   return (
     <VehicleListing
       category="three-wheeler"
+      pageTitle="Electric three-wheelers"
       eyebrow="Electric 3-wheelers"
       title="Built for every"
       accent="business."

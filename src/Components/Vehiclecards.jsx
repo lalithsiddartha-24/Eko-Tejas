@@ -1,10 +1,10 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import scooterImage from "../assets/scooter_transparent.png";
+import scooterImage from "../assets/scooter_transparent.webp";
 import Container from "./ui/Container";
 import Reveal from "./ui/Reveal";
 import SectionHeading from "./ui/SectionHeading";
-import { AutoIllustration } from "./ui/VehicleIllustrations";
+import threeWheelerImage from "../assets/three-wheeler-banana-market.webp";
 
 /**
  * "Our vehicles": the two category cards on the home page.
@@ -49,7 +49,7 @@ function Vehiclecards() {
             </Link>
           </Reveal>
 
-          {/* Three-wheelers: same soft card, with a line drawing */}
+          {/* Three-wheelers: same soft card, with the real three-wheeler photo (same one as the 3-wheeler page header) */}
           <Reveal delay={0.08}>
             <Link
               to="/vehicles"
@@ -60,7 +60,19 @@ function Vehiclecards() {
                 title="Electric three-wheelers"
                 text="Reliable, cost-efficient vehicles built for businesses and urban mobility."
               />
-              <AutoIllustration className="relative mx-auto mt-auto w-[78%] max-w-sm pt-8 text-forest-700/40 transition-transform duration-700 group-hover:translate-x-2 motion-reduce:transition-none" />
+              {/* mt-auto pushes the photo to the bottom; pt-8 keeps at least 2rem above it.
+                  The inner box clips the hover zoom to the rounded corners. */}
+              <div className="relative mt-auto pt-8">
+                <div className="overflow-clip rounded-[1.25rem]">
+                <img
+                  src={threeWheelerImage}
+                  alt=""
+                  loading="lazy"
+                  // A gentle zoom on hover, like the scooter sliding in on the other card.
+                  className="aspect-[16/10] w-full object-cover object-[45%_center] transition-transform duration-700 group-hover:scale-[1.04] motion-reduce:transition-none"
+                />
+                </div>
+              </div>
               <ArrowBadge />
             </Link>
           </Reveal>
