@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Contact from "./Components/Contact";
 import Coreservice from "./Components/Coreservice";
 import Features from "./Components/Features";
@@ -27,6 +27,11 @@ const Twowheeler = lazy(() => import("./Pages/Twowheeler"));
 const Threewheeler = lazy(() => import("./Pages/Threewheeler"));
 const VehiclePresentation = lazy(() => import("./Pages/VehiclePresentation"));
 const NotFound = lazy(() => import("./Pages/NotFound"));
+// Admin pages are lazy too: customers never download the admin code
+// (or the Supabase login library it uses).
+const AdminLogin = lazy(() => import("./Pages/admin/AdminLogin"));
+const AdminDashboard = lazy(() => import("./Pages/admin/AdminDashboard"));
+const RequireAdmin = lazy(() => import("./Components/admin/RequireAdmin"));
 
 function HomePage() {
   return (
@@ -53,12 +58,16 @@ function PageLoading() {
 }
 
 function App() {
+  // WHY: admin pages are a staff tool with their own header, so they don't
+  // show the customer navbar ("Book a test drive"...) or the footer.
+  const isAdminPage = useLocation().pathname.startsWith("/admin");
+
   return (
     // `flex min-h-svh flex-col` + `flex-1` on the content keeps the footer at
     // the bottom of the screen even on short pages (like an error page).
     <div className="flex min-h-svh flex-col">
       <ScrollManager />
-      <Navbar />
+      {!isAdminPage && <Navbar />}
 
       <div className="flex-1">
         <Suspense fallback={<PageLoading />}>
@@ -69,13 +78,32 @@ function App() {
             <Route path="/vehicle-presentation/:vehicleCategory/:vehicleName" element={<VehiclePresentation />} />
             <Route path="/vehicle-presentation/:vehicleName" element={<VehiclePresentation />} />
             <Route path="/vehicle-presentation" element={<VehiclePresentation />} />
+
+            {/* Staff only. RequireAdmin = the frontend guard; the backend still checks every request. */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin"
+              element={
+                <RequireAdmin>
+                  <AdminDashboard section="bookings" />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/enquiries"
+              element={
+                <RequireAdmin>
+                  <AdminDashboard section="enquiries" />
+                </RequireAdmin>
+              }
+            />
             {/* Any other address: a friendly "page not found" instead of a silent redirect. */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </div>
 
-      <Footer />
+      {!isAdminPage && <Footer />}
     </div>
   );
 }
