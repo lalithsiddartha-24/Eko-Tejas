@@ -54,7 +54,46 @@ function getVehicleValue(vehicle, fieldNames) {
   )?.[1];
 }
 
+// Friendly names for the spec sheet columns (backend: vehicle_specifications).
+// WHY: turning "dimensions_mm_detail" into words automatically gives
+// "Dimensions Mm Detail". Customers should read "Dimensions (mm)".
+// Any column not listed here still gets an automatic label below.
+const specificationLabels = {
+  top_speed: "Top speed",
+  voltage: "Voltage",
+  rated_power: "Rated power",
+  motor_type: "Motor type",
+  motor_type_detail: "Motor type",
+  motor_power_options: "Motor power options",
+  battery_options_and_range: "Battery options & range",
+  battery_type_detail: "Battery type",
+  battery_quantity: "Number of batteries",
+  charging_duration: "Charging time",
+  charger_specifications: "Charger",
+  controller: "Controller",
+  controller_detail: "Controller",
+  transmission_mode: "Transmission",
+  brakes: "Brakes",
+  suspension: "Suspension",
+  wheels_and_tyre_size: "Wheels & tyre size",
+  dimensions_mm: "Dimensions (mm)",
+  dimensions_mm_detail: "Dimensions (mm)",
+  ground_clearance_mm: "Ground clearance (mm)",
+  ground_clearance_detail: "Ground clearance",
+  boot_space_liters: "Boot space (litres)",
+  loading_capacity: "Loading capacity",
+  carrying_capacity_detail: "Carrying capacity",
+  cargo_dimensions: "Cargo box size",
+  curb_weight: "Kerb weight",
+  gradeability: "Gradeability",
+  lighting: "Lighting",
+  speedometer: "Speedometer",
+  smart_features: "Smart features",
+  additional_fittings: "Additional fittings",
+};
+
 function formatFieldLabel(key) {
+  if (specificationLabels[key]) return specificationLabels[key];
   return key
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
     .replace(/[_-]+/g, " ")

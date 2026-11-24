@@ -20,6 +20,68 @@ const ApiError = require("../utils/ApiError");
 //    leak to the public automatically.
 const PUBLIC_VEHICLE_FIELDS = "id,name,category,tagline,range,power,image";
 
+// The spec sheet columns from `vehicle_specifications` (migration 003),
+// shown on the vehicle detail page.
+// WHY a list again, not "*": that table also holds `specification_notes`,
+// an INTERNAL note for staff ("verify before publishing"). Customers must
+// never see it, so it is simply not in this list. Same for the columns that
+// duplicate `vehicles` (name, category, range...) and its own id/created_at.
+const SPECIFICATION_FIELDS = [
+  "top_speed",
+  "voltage",
+  "rated_power",
+  "motor_type",
+  "motor_type_detail",
+  "motor_power_options",
+  "battery_options_and_range",
+  "battery_type_detail",
+  "battery_quantity",
+  "charging_duration",
+  "charger_specifications",
+  "controller",
+  "controller_detail",
+  "transmission_mode",
+  "brakes",
+  "suspension",
+  "wheels_and_tyre_size",
+  "dimensions_mm",
+  "dimensions_mm_detail",
+  "ground_clearance_mm",
+  "ground_clearance_detail",
+  "boot_space_liters",
+  "loading_capacity",
+  "carrying_capacity_detail",
+  "cargo_dimensions",
+  "curb_weight",
+  "gradeability",
+  "lighting",
+  "speedometer",
+  "smart_features",
+  "additional_fittings",
+].join(",");
+
+// The detail page's query: the vehicle PLUS its spec sheet, in ONE request.
+// `specifications:vehicle_specifications(...)` is a Supabase "embed" (the same
+// trick as `vehicle:vehicles(...)` in bookings): it follows the foreign key
+// vehicle_specifications.vehicle_id -> vehicles.id and nests the matching row
+// inside the vehicle, under the name `specifications`.
+const VEHICLE_DETAIL_FIELDS = `${PUBLIC_VEHICLE_FIELDS},specifications:vehicle_specifications(${SPECIFICATION_FIELDS})`;
+
+/**
+ * Keep only the specs that have a value.
+ * WHY: the scooters and the 3-wheelers fill DIFFERENT columns (a scooter has
+ * `brakes`, a 3-wheeler has `cargo_dimensions`). Every other column is null.
+ * Sending 20 empty fields would only make the response bigger.
+ */
+function cleanSpecifications(specifications) {
+  // Supabase returns the embed as a one-item list ([{...}]) for our table,
+  // or as an object ({...}) for a one-to-one constraint. Accept both.
+  const row = Array.isArray(specifications) ? specifications[0] : specifications;
+  return Object.fromEntries(
+    Object.entries(row || {}).filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== "")
+  );
+}
+
 /**
  * List vehicles, optionally filtered by category.
  * @param {{ category?: "two-wheeler" | "three-wheeler" }} filters
@@ -47,7 +109,8 @@ async function listVehicles({ category } = {}) {
 }
 
 /**
- * Find one vehicle by its exact name, e.g. "Axel Pro" or "ICE – 121".
+ * Find one vehicle by its exact name, e.g. "Axel Pro" or "ICE – 121",
+ * together with its spec sheet (`specifications`, from migration 003).
  * Used by the vehicle detail (presentation) page.
  */
 async function getVehicleByName(name) {
@@ -56,7 +119,7 @@ async function getVehicleByName(name) {
   // maybeSingle() returns null (not an error) when no row matches.
   const { data, error } = await supabase
     .from("vehicles")
-    .select(PUBLIC_VEHICLE_FIELDS)
+    .select(VEHICLE_DETAIL_FIELDS)
     .eq("name", name)
     .limit(1)
     .maybeSingle();
@@ -69,7 +132,9 @@ async function getVehicleByName(name) {
     throw ApiError.notFound(`Vehicle "${name}" not found`);
   }
 
-  return data;
+  // A vehicle with no spec sheet yet gets specifications: {} (not an error):
+  // the page still shows the basics (range, power) from `vehicles`.
+  return { ...data, specifications: cleanSpecifications(data.specifications) };
 }
 
 /**

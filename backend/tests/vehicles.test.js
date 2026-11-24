@@ -73,8 +73,34 @@ test("GET /api/vehicles/:name returns one vehicle by exact name", async () => {
   const { status, body } = await get(`/api/vehicles/${encodeURIComponent("Axel")}`);
 
   assert.equal(status, 200);
-  assert.deepEqual(body.data, axel);
+  // No spec sheet in the fake row -> an empty object, not an error.
+  assert.deepEqual(body.data, { ...axel, specifications: {} });
   assert.ok(fake.calls.some((c) => c[0] === "eq" && c[1] === "name" && c[2] === "Axel"));
+});
+
+test("GET /api/vehicles/:name includes the spec sheet, without empty fields", async () => {
+  fake.result = {
+    data: {
+      ...axel,
+      specifications: { top_speed: "25 km/h", brakes: "Disc", cargo_dimensions: null, lighting: "  " },
+    },
+    error: null,
+  };
+  const { status, body } = await get("/api/vehicles/Axel");
+
+  assert.equal(status, 200);
+  // null and blank values are dropped: scooters and 3-wheelers fill different columns.
+  assert.deepEqual(body.data.specifications, { top_speed: "25 km/h", brakes: "Disc" });
+});
+
+test("the detail query embeds vehicle_specifications but never asks for internal notes", async () => {
+  fake.result = { data: axel, error: null };
+  await get("/api/vehicles/Axel");
+
+  const select = fake.calls.find((c) => c[0] === "select")[1];
+  assert.match(select, /specifications:vehicle_specifications\(/);
+  // specification_notes is a staff-only note ("verify before publishing").
+  assert.ok(!select.includes("specification_notes"));
 });
 
 test("GET /api/vehicles/:name returns 404 when no vehicle matches", async () => {
