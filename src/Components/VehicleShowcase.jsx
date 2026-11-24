@@ -142,7 +142,8 @@ export function VehicleGallery({ images, vehicleName, colorName, isThreeWheeler 
             animate={{ opacity: 1, scale: 1 }}
             exit={reduceMotion ? undefined : { opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="relative h-full w-full object-contain p-6 drop-shadow-[0_24px_24px_rgb(15_46_39/0.18)] sm:p-10"
+            // Studio photos have their own background, so they fill the frame.
+            className="relative h-full w-full object-cover"
           />
         </AnimatePresence>
 
@@ -181,7 +182,7 @@ export function VehicleGallery({ images, vehicleName, colorName, isThreeWheeler 
                 index === activeIndex ? "border-forest-900" : "border-transparent opacity-70 hover:opacity-100"
               }`}
             >
-              <img src={image.src} alt="" loading="lazy" className="h-full w-full object-contain p-2" />
+              <img src={image.src} alt="" loading="lazy" className="h-full w-full object-cover" />
             </button>
           ))}
         </div>

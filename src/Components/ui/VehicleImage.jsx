@@ -21,20 +21,16 @@ function VehicleImage({ src, alt, name = "", isThreeWheeler = false, className =
       className={`@container relative isolate flex items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_50%_0%,#ffffff_0%,var(--color-mint-100)_55%,var(--color-mint-200)_100%)] ${className}`}
     >
       {showPhoto ? (
-        <>
-          {/* Soft "floor" shadow so the vehicle looks like it is standing somewhere. */}
-          <div
-            aria-hidden="true"
-            className="absolute bottom-[12%] left-1/2 -z-10 h-[10%] w-[70%] -translate-x-1/2 rounded-[50%] bg-forest-900/15 blur-xl"
-          />
-          <img
+        // WHY object-cover (fill the frame, trim the edges a little) and no padding:
+        // our vehicle photos are studio shots with their own background and floor.
+        // Shrinking them with padding (object-contain) showed a photo inside a frame.
+        <img
           src={src}
           alt={alt || name}
           loading="lazy"
           onError={() => setFailedSrc(src)}
-          className={`h-full w-full object-contain p-6 drop-shadow-[0_20px_22px_rgb(15_46_39/0.18)] ${imgClassName}`}
-          />
-        </>
+          className={`h-full w-full object-cover ${imgClassName}`}
+        />
       ) : (
         <div
           role="img"
