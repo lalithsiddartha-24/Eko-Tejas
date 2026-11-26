@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Container from "./ui/Container";
 import Reveal from "./ui/Reveal";
 import SectionHeading from "./ui/SectionHeading";
-import threeWheelerImage from "../assets/three-wheeler-banana-market.webp";
+import threeWheelerImage from "../assets/three-wheeler-e-rickshaw.webp";
 import twoWheelerImage from "../assets/two-wheeler-skyscrapers.webp";
 
 /**
@@ -46,13 +46,15 @@ function Vehiclecards() {
             </Link>
           </Reveal>
 
-          {/* Three-wheelers: same soft card, with the real three-wheeler photo (same one as the 3-wheeler page header) */}
+          {/* Three-wheelers: the green e-rickshaw in city traffic (black-and-white + green, like the 2-wheeler photo) */}
           <Reveal delay={0.08}>
             <Link
               to="/vehicles"
               className="group relative isolate flex h-full min-h-[28rem] flex-col overflow-hidden rounded-[2rem] bg-forest-950 p-7 shadow-soft transition duration-500 hover:-translate-y-1 hover:shadow-lift sm:min-h-[32rem] sm:p-9 motion-reduce:hover:translate-y-0"
             >
-              <CardPhoto src={threeWheelerImage} position="object-[45%_70%]" />
+              {/* This vehicle fills its photo top to bottom, so the photo starts lower
+                  (`fromTop`) and the driver's face stays clear of the text. */}
+              <CardPhoto src={threeWheelerImage} position="object-[52%_center]" fromTop />
               <CardText
                 label="3-Wheelers"
                 title="Electric three-wheelers"
@@ -86,16 +88,23 @@ function CardText({ label, title, text }) {
  *   clears toward the bottom so the vehicle stays bright. Same idea as the
  *   2-wheeler / 3-wheeler page headers.
  * - `position` aims the crop at the vehicle (lower part of each photo).
+ * - `fromTop`: for photos whose subject fills the whole height (the
+ *   e-rickshaw). The photo starts 22% down the card instead of at the very
+ *   top, and its top edge fades out (mask-image) into the card's dark
+ *   background, so the text sits on plain dark and doesn't cover a face.
  * - `alt=""`: decorative, because the card's heading already says what it is.
  */
-function CardPhoto({ src, position }) {
+function CardPhoto({ src, position, fromTop = false }) {
+  const placement = fromTop
+    ? "inset-x-0 bottom-0 top-[22%] h-[78%] [mask-image:linear-gradient(180deg,transparent_0%,black_22%)]"
+    : "inset-0 h-full";
   return (
     <>
       <img
         src={src}
         alt=""
         loading="lazy"
-        className={`absolute inset-0 -z-10 h-full w-full object-cover ${position} transition-transform duration-700 group-hover:scale-[1.04] motion-reduce:transition-none`}
+        className={`absolute -z-10 w-full object-cover ${placement} ${position} transition-transform duration-700 group-hover:scale-[1.04] motion-reduce:transition-none`}
       />
       <div
         aria-hidden="true"
