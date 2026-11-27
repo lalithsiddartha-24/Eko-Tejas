@@ -14,8 +14,8 @@ const links = [
   { label: "Home", to: "/", end: true },
   { label: "2-Wheelers", to: "/twowheelers" },
   { label: "3-Wheelers", to: "/vehicles" },
-  { label: "Service", to: "/#service" },
-  { label: "Contact", to: "/#contact" },
+  { label: "About", to: "/about" },
+  { label: "Media", to: "/media" },
 ];
 
 function Navbar() {

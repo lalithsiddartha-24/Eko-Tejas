@@ -24,6 +24,8 @@ const columns = [
   {
     title: "Company",
     links: [
+      { label: "About us", to: "/about" },
+      { label: "Media", to: "/media" },
       { label: "Service & care", to: "/#service" },
       { label: "Contact us", to: "/#contact" },
       { label: "Become a dealer", to: "/#contact", state: { enquiryType: "dealership" } },

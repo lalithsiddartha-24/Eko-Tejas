@@ -27,6 +27,8 @@ const Twowheeler = lazy(() => import("./Pages/Twowheeler"));
 const Threewheeler = lazy(() => import("./Pages/Threewheeler"));
 const VehiclePresentation = lazy(() => import("./Pages/VehiclePresentation"));
 const NotFound = lazy(() => import("./Pages/NotFound"));
+const About = lazy(() => import("./Pages/About"));
+const Media = lazy(() => import("./Pages/Media"));
 // Admin pages are lazy too: customers never download the admin code
 // (or the Supabase login library it uses).
 const AdminLogin = lazy(() => import("./Pages/admin/AdminLogin"));
@@ -78,6 +80,8 @@ function App() {
             <Route path="/vehicle-presentation/:vehicleCategory/:vehicleName" element={<VehiclePresentation />} />
             <Route path="/vehicle-presentation/:vehicleName" element={<VehiclePresentation />} />
             <Route path="/vehicle-presentation" element={<VehiclePresentation />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/media" element={<Media />} />
 
             {/* Staff only. RequireAdmin = the frontend guard; the backend still checks every request. */}
             <Route path="/admin/login" element={<AdminLogin />} />

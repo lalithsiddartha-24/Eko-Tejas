@@ -1,24 +1,11 @@
 import { Mail, MapPin } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { offices } from "../data/company";
 import EnquiryForm from "./EnquiryForm";
 import Container from "./ui/Container";
 import Reveal from "./ui/Reveal";
 import SectionHeading from "./ui/SectionHeading";
 
-const offices = [
-  {
-    title: "Head office",
-    city: "Gooty, Andhra Pradesh",
-    address: "1/137, Sreenilayam, KPS Complex, Gooty – 515402, Anantapur Dist",
-    emails: ["info@ekotejas.in", "admin@tejasevehicles.com"],
-  },
-  {
-    title: "Corporate office",
-    city: "Pune, Maharashtra",
-    address: "#2, Tejashree Park Soc, S. No 69, CTS No. 122/A, Erandawane, Pune – 411004",
-    emails: ["sales@ekotejas.in", "sales.manager@ekotejas.in", "director.sales@ekotejas.in"],
-  },
-];
 
 /**
  * Contact section: ONE card split into two panels.

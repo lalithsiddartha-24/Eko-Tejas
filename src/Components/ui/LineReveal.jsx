@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { Fragment } from "react";
 
 /**
  * Lines of a heading slide up into view, one after another, from behind an
@@ -18,7 +19,11 @@ function LineReveal({ lines, delay = 0.15 }) {
   const reduceMotion = useReducedMotion();
 
   return lines.map((line, index) => (
-    <span key={line.text} className="-mb-[0.08em] block overflow-hidden pb-[0.08em]">
+    <Fragment key={line.text}>
+      {/* A space between lines: invisible (each line is its own block), but
+          without it screen readers read "smart.Ride" as one word. */}
+      {index > 0 && " "}
+    <span className="-mb-[0.08em] block overflow-hidden pb-[0.08em]">
       {reduceMotion ? (
         <span className={`block ${line.className || ""}`}>{line.text}</span>
       ) : (
@@ -32,6 +37,7 @@ function LineReveal({ lines, delay = 0.15 }) {
         </motion.span>
       )}
     </span>
+    </Fragment>
   ));
 }
 

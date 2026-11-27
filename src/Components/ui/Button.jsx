@@ -20,6 +20,9 @@ const variants = {
   soft: "bg-volt text-forest-950 hover:bg-volt-soft",
   // Thin outline: the quietest button.
   outline: "border border-forest-900/15 bg-white/70 text-forest-900 backdrop-blur hover:border-forest-900/40",
+  // For DARK backgrounds: a solid white button, and a see-through outlined one.
+  light: "bg-white text-forest-950 hover:bg-mint-100",
+  ghost: "border border-white/25 text-white hover:bg-white/10",
 };
 
 const sizes = {
